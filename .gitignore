@@ -1,0 +1,16 @@
+# SBT
+target/
+lib_managed/
+src_managed/
+project/boot/
+
+# Editors that matter.
+*~
+*.#*
+*#
+
+# Other editors.
+*.swp
+
+# SQLite
+*.sqlite
