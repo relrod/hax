@@ -9,3 +9,5 @@ libraryDependencies += "pircbot" % "pircbot" % "1.5.0"
 libraryDependencies += "org.scalaquery" % "scalaquery_2.9.0-1" % "0.9.5"
 
 libraryDependencies += "org.xerial" % "sqlite-jdbc" % "3.7.2"
+
+libraryDependencies += "net.databinder" %% "dispatch-jsoup" % "0.8.7"
