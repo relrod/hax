@@ -15,7 +15,7 @@ It does very little right now, but that will probably change.
 
 h1. Installing
 
-Standard SBT project, so just clone and `sbt update; sbt run`.
+Standard SBT project, so just clone and @sbt update; sbt run@.
 
 h1. License
 
