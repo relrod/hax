@@ -40,6 +40,11 @@ class HaxBot(nick: String, database: Database) extends PircBot {
   val TwitterRegex = """(?i)https?://twitter.com/.*/status(?:es|)/(\d+)""".r
   
   override def onMessage(channel: String, sender: String, login: String, hostname: String, message: String) {
+    if (message == "`meep") {
+      sendMessage(channel, "meep")
+      return
+    }
+
     message match {
       case TwitterRegex(tweetID) => sendMessage(channel, sender + ": \"" + fetchTweet(tweetID) + "\"")
       case URLRegex(fullURL) => sendMessage(channel, sender + ": \"" + fetchURLTitle(fullURL) + "\"")
@@ -68,6 +73,8 @@ class HaxBot(nick: String, database: Database) extends PircBot {
           case _ =>
         }
       }
+
+      case _ =>
 
     }
   }
