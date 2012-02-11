@@ -5,6 +5,8 @@ import org.scalaquery.session._
 import org.scalaquery.session.Database.threadLocalSession
 import org.scalaquery.ql.basic.BasicDriver.Implicit._
 import org.scalaquery.ql._
+import java.sql.Timestamp
+import java.util.Date
 import Karma._
 import Quote._
 
@@ -46,8 +48,8 @@ class HaxBot(nick: String, database: Database) extends PircBot {
     }
 
     message match {
-      case TwitterRegex(tweetID) => sendMessage(channel, sender + ": \"" + fetchTweet(tweetID) + "\"")
-      case URLRegex(fullURL) => sendMessage(channel, sender + ": \"" + fetchURLTitle(fullURL) + "\"")
+      case TwitterRegex(tweetID) => sendMessage(channel, "\"" + fetchTweet(tweetID) + "\"")
+      case URLRegex(fullURL) => sendMessage(channel, "\"" + fetchURLTitle(fullURL) + "\"")
 
       case KarmaCommand(item, karma) => {
         karma match {
@@ -59,6 +61,10 @@ class HaxBot(nick: String, database: Database) extends PircBot {
       case CommandWithArguments(command, arguments) => {
         command match {
           case "hit" => sendAction(channel, "hits " + arguments + "with a ><>.")
+          case "aquote" => {
+            val quoteID = addQuote(arguments, sender, channel)
+            sendMessage(channel, sender + ": I've added your quote, #" + quoteID + ".")
+          }
           case _ =>
         }
       }
@@ -73,9 +79,7 @@ class HaxBot(nick: String, database: Database) extends PircBot {
           case _ =>
         }
       }
-
       case _ =>
-
     }
   }
 
@@ -110,6 +114,16 @@ class HaxBot(nick: String, database: Database) extends PircBot {
       }
 
       "Karma for \"" + item_key + "\" is now " + karma.first + "."    
+    }
+  }
+
+  /** Add a quote to the quote database. Return nothing.
+   */
+  private def addQuote(quote: String, nick: String, channel: String): Int = {
+    database withSession {
+      val timestamp = (new Date).getTime.toString
+      Quote.quote ~ Quote.added_by ~ Quote.channel ~ Quote.timestamp insert(quote, nick, channel, timestamp)
+      Query(Quote.count).first.toInt
     }
   }
 
