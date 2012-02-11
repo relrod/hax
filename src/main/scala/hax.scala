@@ -32,15 +32,16 @@ class HaxBot(nick: String, database: Database) extends PircBot {
   } catch {
     case sqle: java.sql.SQLException => println("*** SQLite3 table exists.")
   }
+
+  val CommandWithArguments = ("^" + comChar + "(.+) (.+)").r
+  val CommandWithoutArguments = ("^" + comChar + "(.+)").r
+  val KarmaCommand = ("""(?i)^([a-z0-9\.]+)(--|\+\+)""").r
+  val URLRegex = ("""(?i)(https?://[\S]+)""").r
+  val TwitterRegex = """(?i)https?://twitter.com/.*/status(?:es|)/(\d+)""".r
   
   override def onMessage(channel: String, sender: String, login: String, hostname: String, message: String) {
-    val CommandWithArguments = ("^" + comChar + "(.+) (.+)").r
-    val CommandWithoutArguments = ("^" + comChar + "(.+)").r
-    val KarmaCommand = ("""(?i)^([a-z0-9\.]+)(--|\+\+)""").r
-    val URLRegex = ("""(?i)(https?://[\S]+)""").r
-    
     message match {
-
+      case TwitterRegex(tweetID) => sendMessage(channel, sender + ": \"" + fetchTweet(tweetID) + "\"")
       case URLRegex(fullURL) => sendMessage(channel, sender + ": \"" + fetchURLTitle(fullURL) + "\"")
 
       case KarmaCommand(item, karma) => {
@@ -79,6 +80,12 @@ class HaxBot(nick: String, database: Database) extends PircBot {
   private def fetchURLTitle(theURL: String): String = {
     val https = new Http with HttpsLeniency
     https(url(theURL) </> { html => html.title }).toString
+  }
+
+  private def fetchTweet(tweetID: String): String = {
+    val https = new Http with HttpsLeniency
+    val twitterURL = "http://api.twitter.com/1/statuses/show.xml?id=" + tweetID
+    https(url(twitterURL) </> { status => status.select("text").text }).toString
   }
 
   private def dispenseKarma(item_key: String, direction: String): String = {
