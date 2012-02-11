@@ -38,8 +38,8 @@ class HaxBot(nick: String, database: Database) extends PircBot {
   val CommandWithArguments = ("^" + comChar + "(.+) (.+)").r
   val CommandWithoutArguments = ("^" + comChar + "(.+)").r
   val KarmaCommand = ("""(?i)^([a-z0-9\.]+)(--|\+\+)""").r
-  val URLRegex = ("""(?i)(https?://[\S]+)""").r
-  val TwitterRegex = """(?i)https?://twitter.com/.*/status(?:es|)/(\d+)""".r
+  val URLRegex = ("""(?i).*?(https?://[\S]+) ?.*""").r 
+  val TwitterRegex = """(?i).*?https?://twitter.com/.*/status(?:es|)/(\d+) ?.*""".r
   
   override def onMessage(channel: String, sender: String, login: String, hostname: String, message: String) {
     if (message == "`meep") {
@@ -49,7 +49,7 @@ class HaxBot(nick: String, database: Database) extends PircBot {
 
     message match {
       case TwitterRegex(tweetID) => sendMessage(channel, "\"" + fetchTweet(tweetID) + "\"")
-      case URLRegex(fullURL) => sendMessage(channel, "\"" + fetchURLTitle(fullURL) + "\"")
+      case URLRegex(fullURL) => sendMessage(channel, fetchURLTitle(fullURL))
 
       case KarmaCommand(item, karma) => {
         karma match {
@@ -90,7 +90,11 @@ class HaxBot(nick: String, database: Database) extends PircBot {
    */
   private def fetchURLTitle(theURL: String): String = {
     val https = new Http with HttpsLeniency
-    https(url(theURL) </> { html => html.title }).toString
+    val title = https(url(theURL) </> { html => html.title }).toString
+    if (!title.isEmpty)
+      "\"" + title + "\""
+    else
+      ""
   }
 
   private def fetchTweet(tweetID: String): String = {

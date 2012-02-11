@@ -9,11 +9,11 @@ object Karma extends BasicTable[(Int, String, Int)]("karma") {
   def * = id ~ item ~ karma
 }
 
-object Quote extends BasicTable[(Int, String, String, String, Long)]("quotes") {
+object Quote extends BasicTable[(Int, String, String, String, String)]("quotes") {
   def id = column[Int]("id", O PrimaryKey, O NotNull)
   def quote = column[String]("quote", O NotNull)
   def added_by = column[String]("added_by")
   def channel = column[String]("channel")
-  def timestamp = column[Long]("timestamp", O NotNull, O DBType "bigint(15)")
+  def timestamp = column[String]("timestamp", O NotNull, O DBType "text")
   def * = id ~ quote ~ added_by ~ channel ~ timestamp
 }
