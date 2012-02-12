@@ -76,7 +76,7 @@ class HaxBot(nick: String, database: Database) extends PircBot {
             val time: String = (new java.util.Date).toString
             sendMessage(channel, sender + ": " + time)
           }
-          case "rquote" => sendMessage(channel, sender + ": " + randomQuote())
+          case "rquote" => sendMessage(channel, randomQuote())
           case _ =>
         }
       }
