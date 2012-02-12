@@ -154,7 +154,7 @@ class HaxBot(nick: String, database: Database) extends PircBot {
    */
   private def fetchWeather(location: String): String = {
     val https = new Http with HttpsLeniency
-    val myUrl = "http://www.google.com/ig/api?weather=" + java.net.URLEncoder.encode(location)
+    val myUrl = "http://www.google.com/ig/api?weather=" + java.net.URLEncoder.encode(location, "UTF-8")
     
     val weather = https(url(myUrl) </> { xml =>
       "Weather for " +
