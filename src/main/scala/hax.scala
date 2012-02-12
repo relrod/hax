@@ -65,6 +65,7 @@ class HaxBot(nick: String, database: Database) extends PircBot {
             val quoteID = addQuote(arguments, sender, channel)
             sendMessage(channel, sender + ": I've added your quote, #" + quoteID + ".")
           }
+          case "weather" => sendMessage(channel, sender + ": " + fetchWeather(arguments))
           case _ =>
         }
       }
@@ -145,4 +146,35 @@ class HaxBot(nick: String, database: Database) extends PircBot {
     }
   }
 
+  /** Fetch the weather for a given city.
+   *
+   * Uses the Google Weather API.
+   * Stolen from duckinator:
+   * https://github.com/duckinator/scala-stuff/blob/master/weather/weather.scala
+   */
+  private def fetchWeather(location: String): String = {
+    val https = new Http with HttpsLeniency
+    val myUrl = "http://www.google.com/ig/api?weather=" + java.net.URLEncoder.encode(location)
+    
+    val weather = https(url(myUrl) </> { xml =>
+      "Weather for " +
+      xml.select("city").attr("data") +
+      ". Conditions: " +
+      xml.select("condition").attr("data") +
+      "; Temp: " +
+      xml.select("temp_f").attr("data") +
+      "F (" +
+      xml.select("temp_c").attr("data") +
+      "C). " +
+      xml.select("humidity").attr("data") +
+      ". " +
+      xml.select("wind_condition").attr("data") +
+      "."
+    }).toString
+
+    if (!weather.isEmpty)
+      weather
+    else
+      "Weather could not be retrieved."
+  }
 }
