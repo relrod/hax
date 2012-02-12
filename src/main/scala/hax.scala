@@ -25,6 +25,7 @@ class HaxBot(nick: String, database: Database) extends PircBot {
   def setComChar(newComChar: String) = comChar = newComChar
   var comChar = """\."""
   setName(nick)
+  setLogin(nick)
 
   try {
     database withSession {
@@ -156,25 +157,27 @@ class HaxBot(nick: String, database: Database) extends PircBot {
     val https = new Http with HttpsLeniency
     val myUrl = "http://www.google.com/ig/api?weather=" + java.net.URLEncoder.encode(location, "UTF-8")
     
-    val weather = https(url(myUrl) </> { xml =>
-      "Weather for " +
-      xml.select("city").attr("data") +
-      ". Conditions: " +
-      xml.select("condition").attr("data") +
-      "; Temp: " +
-      xml.select("temp_f").attr("data") +
-      "F (" +
-      xml.select("temp_c").attr("data") +
-      "C). " +
-      xml.select("humidity").attr("data") +
-      ". " +
-      xml.select("wind_condition").attr("data") +
-      "."
-    }).toString
-
-    if (!weather.isEmpty)
-      weather
-    else
-      "Weather could not be retrieved."
+    val weather = https(url(myUrl) </> {
+      xml => {
+        if (xml.select("condition").isEmpty) {
+          "Weather could not be retrieved."
+        } else {
+          "Weather for " +
+          xml.select("city").attr("data") +
+          ". Conditions: " +
+          xml.select("condition").attr("data") +
+          "; Temp: " +
+          xml.select("temp_f").attr("data") +
+          "F (" +
+          xml.select("temp_c").attr("data") +
+          "C). " +
+          xml.select("humidity").attr("data") +
+          ". " +
+          xml.select("wind_condition").attr("data") +
+          "."
+        }
+      }
+    })
+    weather.toString
   }
 }
