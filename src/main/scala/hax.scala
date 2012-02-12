@@ -92,7 +92,7 @@ class HaxBot(nick: String, database: Database) extends PircBot {
     val https = new Http with HttpsLeniency
     val title = https(url(theURL) </> { html => html.title }).toString
     if (!title.isEmpty)
-      "\"" + title + "\""
+      "\"" + title.replace("\n", "") + "\""
     else
       ""
   }
