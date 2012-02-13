@@ -38,7 +38,7 @@ class HaxBot(nick: String, database: Database) extends PircBot {
 
   val CommandWithArguments = ("^" + comChar + "(.+?) (.+)").r
   val CommandWithoutArguments = ("^" + comChar + "(.+)").r
-  val KarmaCommand = ("""(?i)^([a-z0-9\.]+)(--|\+\+)""").r
+  val KarmaCommand = ("""(?i)^(.+)(--|\+\+)""").r
   val URLRegex = ("""(?i).*?(https?://[\S]+) ?.*""").r 
   val TwitterRegex = """(?i).*?https?://twitter.com/.*/status(?:es|)/(\d+) ?.*""".r
   
@@ -54,8 +54,8 @@ class HaxBot(nick: String, database: Database) extends PircBot {
 
       case KarmaCommand(item, karma) => {
         karma match {
-          case "++" => sendMessage(channel, dispenseKarma(item, "up"))
-          case "--" => sendMessage(channel, dispenseKarma(item, "down"))
+          case "++" => dispenseKarma(item, "up")
+          case "--" => dispenseKarma(item, "down")
         }
       }
 
@@ -67,6 +67,7 @@ class HaxBot(nick: String, database: Database) extends PircBot {
             sendMessage(channel, sender + ": I've added your quote, #" + quoteID + ".")
           }
           case "weather" => sendMessage(channel, sender + ": " + fetchWeather(arguments))
+          case "karma" => sendMessage(channel, sender + ": " + getKarma(arguments))
           case _ =>
         }
       }
@@ -105,7 +106,11 @@ class HaxBot(nick: String, database: Database) extends PircBot {
     https(url(twitterURL) </> { status => status.select("text").text }).toString
   }
 
-  private def dispenseKarma(item_key: String, direction: String): String = {
+  /** Dispense positive or negaitve karma to a given item.
+   *
+   * Returns a big fat cup of nothing.
+   */
+  private def dispenseKarma(item_key: String, direction: String) {
     database withSession {
       // Check if the item exists already.
       var karma = for(k <- Karma if k.item === item_key) yield k.karma
@@ -118,8 +123,19 @@ class HaxBot(nick: String, database: Database) extends PircBot {
         case "up" => karma.update(karma.first + 1)
         case "down" => karma.update(karma.first - 1)
       }
+    }
+  }
 
-      "Karma for \"" + item_key + "\" is now " + karma.first + "."    
+  /** Get the karma for a given item.
+   *
+   * Returns an integer of the karma for an item.
+   */
+  private def getKarma(item_key: String): Int = {
+    database withSession {
+      // Check if the item exists already.
+      var karma = for(k <- Karma if k.item === item_key) yield k.karma
+      if (karma.list.isEmpty) 0
+      else karma.first
     }
   }
 
