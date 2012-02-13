@@ -59,7 +59,9 @@ class HaxBot(nick: String, database: Database) extends PircBot {
         }
       }
 
-      case CommandWithArguments(command, arguments) => {
+      case CommandWithArguments(command, raw_arguments) => {
+        val arguments: String = raw_arguments.replaceAll("\\s+$", "")
+        
         command match {
           case "hit" => sendAction(channel, "hits " + arguments + "with a ><>.")
           case "aquote" => {
