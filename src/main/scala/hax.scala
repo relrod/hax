@@ -36,7 +36,7 @@ class HaxBot(nick: String, database: Database) extends PircBot {
     case sqle: java.sql.SQLException => println("*** SQLite3 table exists.")
   }
 
-  val CommandWithArguments = ("^" + comChar + "(.+) (.+)").r
+  val CommandWithArguments = ("^" + comChar + "(.+?) (.+)").r
   val CommandWithoutArguments = ("^" + comChar + "(.+)").r
   val KarmaCommand = ("""(?i)^([a-z0-9\.]+)(--|\+\+)""").r
   val URLRegex = ("""(?i).*?(https?://[\S]+) ?.*""").r 
