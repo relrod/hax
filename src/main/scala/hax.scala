@@ -1,5 +1,5 @@
 import org.jibble.pircbot._
-import dispatch.{Http, HttpsLeniency, url}
+import dispatch.{thread, Http, HttpsLeniency, url}
 import dispatch.jsoup.JSoupHttp._
 import org.scalaquery.session._
 import org.scalaquery.session.Database.threadLocalSession
@@ -69,7 +69,9 @@ class HaxBot(nick: String, database: Database) extends PircBot {
             sendMessage(channel, sender + ": I've added your quote, #" + quoteID + ".")
           }
           case "weather" => sendMessage(channel, sender + ": " + fetchWeather(arguments))
-          case "karma" => sendMessage(channel, sender + ": " + getKarma(arguments))
+          case "karma" =>
+            arguments.split(",").foreach(item =>
+              sendMessage(channel, sender + ": '" + item + "' has " + getKarma(item) + " karma."))
           case _ =>
         }
       }
