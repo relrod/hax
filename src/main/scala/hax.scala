@@ -54,8 +54,8 @@ class HaxBot(nick: String, database: Database) extends PircBot {
 
       case KarmaCommand(item, karma) => {
         karma match {
-          case "++" => dispenseKarma(item, "up")
-          case "--" => dispenseKarma(item, "down")
+          case "++" => dispenseKarma(item.toLowerCase, "up")
+          case "--" => dispenseKarma(item.toLowerCase, "down")
         }
       }
 
@@ -71,7 +71,7 @@ class HaxBot(nick: String, database: Database) extends PircBot {
           case "weather" => sendMessage(channel, sender + ": " + fetchWeather(arguments))
           case "karma" =>
             arguments.split(",").take(3).foreach(item =>
-              sendMessage(channel, sender + ": '" + item + "' has " + getKarma(item) + " karma."))
+              sendMessage(channel, sender + ": '" + item.toLowerCase + "' has " + getKarma(item.toLowerCase) + " karma."))
           case _ =>
         }
       }
