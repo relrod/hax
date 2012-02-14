@@ -70,7 +70,7 @@ class HaxBot(nick: String, database: Database) extends PircBot {
           }
           case "weather" => sendMessage(channel, sender + ": " + fetchWeather(arguments))
           case "karma" =>
-            arguments.split(",").foreach(item =>
+            arguments.split(",").take(3).foreach(item =>
               sendMessage(channel, sender + ": '" + item + "' has " + getKarma(item) + " karma."))
           case _ =>
         }
