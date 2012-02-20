@@ -15,7 +15,7 @@ object Hax {
     val db = Database.forURL("jdbc:sqlite:hax.sqlite", driver = "org.sqlite.JDBC")
     val bot: HaxBot = new HaxBot(nick = "Hax", database = db)
     bot.setVerbose(true)
-    bot.setComChar(".")
+    bot.setComChar("..")
     bot.connect("irc.tenthbit.net")
     bot.joinChannel("#offtopic")
   }
@@ -162,8 +162,10 @@ class HaxBot(nick: String, database: Database) extends PircBot {
   private def randomQuote(): String = {
     database withSession {
       val randomQuoteID: Int = scala.util.Random.nextInt(Query(Quote.count).first + 1)
-      val quote = for(q <- Quote if q.id === randomQuoteID) yield q.quote
-      quote.first
+      val quote = for(q <- Quote if q.id === randomQuoteID) yield q.id ~ q.quote
+      quote.first match {
+        case(id, quote) => { "(" + id + ") " + quote }
+      }
     }
   }
 
