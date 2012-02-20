@@ -13,17 +13,14 @@ import Quote._
 object Hax {
   def main(args: Array[String]) {
     val db = Database.forURL("jdbc:sqlite:hax.sqlite", driver = "org.sqlite.JDBC")
-    val bot: HaxBot = new HaxBot(nick = "Hax", database = db)
+    val bot: HaxBot = new HaxBot(nick = "Hax", database = db, ignoreNicks = List("yurbnurb"))
     bot.setVerbose(true)
-    bot.setComChar("..")
     bot.connect("irc.tenthbit.net")
     bot.joinChannel("#offtopic")
   }
 }
 
-class HaxBot(nick: String, database: Database) extends PircBot {
-  def setComChar(newComChar: String) = comChar = newComChar
-  var comChar = """\."""
+class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNicks: List[String] = List()) extends PircBot {
   setName(nick)
   setLogin(nick)
 
@@ -43,6 +40,8 @@ class HaxBot(nick: String, database: Database) extends PircBot {
   val TwitterRegex = """(?i).*?https?://twitter.com/.*/status(?:es|)/(\d+) ?.*""".r
   
   override def onMessage(channel: String, sender: String, login: String, hostname: String, message: String) {
+    if (ignoreNicks.contains(sender)) return
+
     if (message == "`meep") {
       sendMessage(channel, "meep")
       return
