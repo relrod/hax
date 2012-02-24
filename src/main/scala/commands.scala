@@ -1,12 +1,12 @@
 package me.elrod.hax.commands
-import dispatch.{thread, Http, HttpsLeniency, url}
-import dispatch.jsoup.JSoupHttp._
 import org.scalaquery.session._
 import org.scalaquery.session.Database.threadLocalSession
 import org.scalaquery.ql.basic.BasicDriver.Implicit._
 import org.scalaquery.ql._
 import java.sql.Timestamp
 import java.util.Date
+import scalaj.http.{Http,HttpOptions}
+import org.jsoup.Jsoup
 import me.elrod.hax.tables._
 
 // Functions used for commands go here.
@@ -22,31 +22,26 @@ object Command {
     * @param location the location to fetch weather for (zipcode or city/state/country name)
     */
   def fetchWeather(location: String): String = {
-    val https = new Http with HttpsLeniency
-    val myUrl = "http://www.google.com/ig/api?weather=" + java.net.URLEncoder.encode(location, "UTF-8")
-    
-    val weather = https(url(myUrl) </> {
-      xml => {
-        if (xml.select("condition").isEmpty) {
-          "Weather could not be retrieved."
-        } else {
-          "Weather for " +
-          xml.select("city").attr("data") +
-          ". Conditions: " +
-          xml.select("condition").attr("data") +
-          "; Temp: " +
-          xml.select("temp_f").attr("data") +
-          "F (" +
-          xml.select("temp_c").attr("data") +
-          "C). " +
-          xml.select("humidity").attr("data") +
-          ". " +
-          xml.select("wind_condition").attr("data") +
-          "."
-        }
-      }
-    })
-    weather.toString
+    try {
+      val http = Http("https://www.google.com/ig/api?weather=" + java.net.URLEncoder.encode(location, "UTF-8")).option(HttpOptions.connTimeout(2000)).option(HttpOptions.readTimeout(2000))
+      val document = Jsoup.parse(http.asString)
+      "Weather for " +
+      document.select("city").attr("data") +
+      ". Conditions: " +
+      document.select("condition").attr("data") +
+      "; Temp: " +
+      document.select("temp_f").attr("data") +
+      "F (" +
+      document.select("temp_c").attr("data") +
+      "C). " +
+      document.select("humidity").attr("data") +
+      ". " +
+      document.select("wind_condition").attr("data") +
+      "."
+    } catch {
+      case e: java.net.SocketTimeoutException => "<timeout>"
+      case _ => "<error>"
+    }
   }
 
   /** Return a random quote from the global Quote Database

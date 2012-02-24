@@ -1,6 +1,6 @@
 package me.elrod.hax.urlSnarfing
-import dispatch.{thread, Http, HttpsLeniency, url}
-import dispatch.jsoup.JSoupHttp._
+import scalaj.http.{Http,HttpOptions}
+import org.jsoup.Jsoup
 
 object urlSnarfing {
   /** Return the title of a given URL.
@@ -11,12 +11,14 @@ object urlSnarfing {
     * @param theURL the URL to snarf the title from
     */
   def fetchURLTitle(theURL: String): String = {
-    val https = new Http with HttpsLeniency
-    val title = https(url(theURL) </> { html => html.title }).toString
-    if (!title.isEmpty)
-      "\"" + title.replace("\n", "").replaceAll("""\s+""", " ") + "\""
-    else
-      ""
+    try {
+      val http = Http(theURL).option(HttpOptions.allowUnsafeSSL).option(HttpOptions.connTimeout(2000)).option(HttpOptions.readTimeout(2000))
+      val document = Jsoup.parse(http.asString)
+      document.title
+    } catch {
+      case e: java.net.SocketTimeoutException => "<timeout>"
+      case _ => "<error>"
+    }
   }
 
   /** Return a tweet from a given twitter status URL.
@@ -24,9 +26,14 @@ object urlSnarfing {
     * @param tweetID the ID of the tweet to obtain
     */
   def fetchTweet(tweetID: String): String = {
-    val https = new Http with HttpsLeniency
-    val twitterURL = "http://api.twitter.com/1/statuses/show.xml?id=" + tweetID
-    https(url(twitterURL) </> { status => status.select("text").text }).toString
+    try {
+      val http = Http("https://api.twitter.com/1/statuses/show.xml?id=" + tweetID).option(HttpOptions.connTimeout(2000)).option(HttpOptions.readTimeout(2000))
+      val document = Jsoup.parse(http.asString)
+      document.select("text").text
+    } catch {
+      case e: java.net.SocketTimeoutException => "<timeout>"
+      case _ => "<error>"
+    }
   }
 
 }
