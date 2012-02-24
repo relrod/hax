@@ -1,9 +1,18 @@
 package me.elrod.hax.commands
 import dispatch.{thread, Http, HttpsLeniency, url}
 import dispatch.jsoup.JSoupHttp._
+import org.scalaquery.session._
+import org.scalaquery.session.Database.threadLocalSession
+import org.scalaquery.ql.basic.BasicDriver.Implicit._
+import org.scalaquery.ql._
+import java.sql.Timestamp
+import java.util.Date
+import me.elrod.hax.tables._
 
 // Functions used for commands go here.
 object Command {
+  // This is duplicated code (== bad). @todo
+  val database = Database.forURL("jdbc:sqlite:hax.sqlite", driver = "org.sqlite.JDBC")
 
   /** Return the weather for a given location as a string.
     *
@@ -12,7 +21,7 @@ object Command {
     *
     * @param location the location to fetch weather for (zipcode or city/state/country name)
     */
-  def weather(location: String) {
+  def fetchWeather(location: String) {
     val https = new Http with HttpsLeniency
     val myUrl = "http://www.google.com/ig/api?weather=" + java.net.URLEncoder.encode(location, "UTF-8")
     
@@ -75,7 +84,7 @@ object Command {
     *
     * @param item_key the item to obtain karma for
     */
-  private def getKarma(item_key: String): Int = {
+  def getKarma(item_key: String): Int = {
     database withSession {
       // Check if the item exists already.
       var karma = for(k <- Karma if k.item === item_key) yield k.karma
@@ -89,7 +98,7 @@ object Command {
     * @param item_key the item to increment karma for
     * @param direction the way to alter karma (a string "up" or "down")
     */
-  private def dispenseKarma(item_key: String, direction: String) {
+  def dispenseKarma(item_key: String, direction: String) {
     database withSession {
       // Check if the item exists already.
       var karma = for(k <- Karma if k.item === item_key) yield k.karma
