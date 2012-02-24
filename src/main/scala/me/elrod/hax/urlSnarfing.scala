@@ -17,7 +17,7 @@ object urlSnarfing {
       document.title
     } catch {
       case e: java.net.SocketTimeoutException => "<timeout>"
-      case _ => "<error>"
+      case unknown => "<error> " + unknown
     }
   }
 
@@ -32,7 +32,7 @@ object urlSnarfing {
       document.select("text").text
     } catch {
       case e: java.net.SocketTimeoutException => "<timeout>"
-      case _ => "<error>"
+      case unknown => "<error> " + unknown
     }
   }
 

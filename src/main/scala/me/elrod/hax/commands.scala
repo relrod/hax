@@ -44,7 +44,7 @@ object Command {
       }
     } catch {
       case e: java.net.SocketTimeoutException => "<timeout>"
-      case _ => "<error>"
+      case unknown => "<error> " + unknown
     }
   }
 
