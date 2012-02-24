@@ -25,23 +25,35 @@ object Command {
     try {
       val http = Http("https://www.google.com/ig/api?weather=" + java.net.URLEncoder.encode(location, "UTF-8")).option(HttpOptions.connTimeout(2000)).option(HttpOptions.readTimeout(2000))
       val document = Jsoup.parse(http.asString)
-      "Weather for " +
-      document.select("city").attr("data") +
-      ". Conditions: " +
-      document.select("condition").attr("data") +
-      "; Temp: " +
-      document.select("temp_f").attr("data") +
-      "F (" +
-      document.select("temp_c").attr("data") +
-      "C). " +
-      document.select("humidity").attr("data") +
-      ". " +
-      document.select("wind_condition").attr("data") +
-      "."
+      if (document.select("problem_cause").isEmpty) {
+        "Weather for " +
+        getCurrent("city", document, parent = "forecast_information") + 
+        ". Conditions: " +
+        getCurrent("condition", document) +
+        "; Temp: " +
+        getCurrent("temp_f", document) +
+        "F (" +
+        getCurrent("temp_c", document) +
+        "C). " +
+        getCurrent("humidity", document) +
+        ". " +
+        getCurrent("wind_condition", document) + "."
+      } else {
+        "Couldn't get the weather for " + location
+      }
     } catch {
       case e: java.net.SocketTimeoutException => "<timeout>"
       case _ => "<error>"
     }
+  }
+
+  /** Provides a way for fetchWeather() above to easily get current conditions from the Jsoup Document
+   *
+   * @param condition the condition to retrieve from <current_conditions>
+   * @param document the Jsoup document to parse it from.
+   */
+  private def getCurrent(condition: String, parent: String = "current_conditions"): String = {
+    document.select(parent + " " + condition,).attr("data")
   }
 
   /** Return a random quote from the global Quote Database
