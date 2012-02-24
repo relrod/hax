@@ -3,8 +3,6 @@ import org.scalaquery.session._
 import org.scalaquery.session.Database.threadLocalSession
 import org.scalaquery.ql.basic.BasicDriver.Implicit._
 import org.scalaquery.ql._
-import java.sql.Timestamp
-import java.util.Date
 import me.elrod.hax.tables._
 import me.elrod.hax.urlSnarfing.urlSnarfing._
 import me.elrod.hax.commands.Command._

@@ -21,7 +21,7 @@ object Command {
     *
     * @param location the location to fetch weather for (zipcode or city/state/country name)
     */
-  def fetchWeather(location: String) {
+  def fetchWeather(location: String): String = {
     val https = new Http with HttpsLeniency
     val myUrl = "http://www.google.com/ig/api?weather=" + java.net.URLEncoder.encode(location, "UTF-8")
     
