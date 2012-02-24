@@ -10,7 +10,7 @@ import me.elrod.hax.commands.Command._
 object Hax {
   def main(args: Array[String]) {
     val db = Database.forURL("jdbc:sqlite:hax.sqlite", driver = "org.sqlite.JDBC")
-    val bot: HaxBot = new HaxBot(nick = "Hax", database = db, ignoreNicks = List("yurbnurb"))
+    val bot: HaxBot = new HaxBot(nick = "Hax", database = db, ignoreNicks = List("yurbnurb", "RCMP"))
     bot.setVerbose(true)
     bot.connect("irc.tenthbit.net")
     bot.joinChannel("#offtopic")
