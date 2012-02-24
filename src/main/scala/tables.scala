@@ -1,3 +1,4 @@
+package me.elrod.hax.tables
 import org.scalaquery.ql.TypeMapper._
 import org.scalaquery.ql.basic.BasicTable
 

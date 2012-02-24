@@ -1,14 +1,13 @@
 import org.jibble.pircbot._
-import dispatch.{thread, Http, HttpsLeniency, url}
-import dispatch.jsoup.JSoupHttp._
 import org.scalaquery.session._
 import org.scalaquery.session.Database.threadLocalSession
 import org.scalaquery.ql.basic.BasicDriver.Implicit._
 import org.scalaquery.ql._
 import java.sql.Timestamp
 import java.util.Date
-import Karma._
-import Quote._
+import me.elrod.hax.tables._
+import me.elrod.hax.urlSnarfing.urlSnarfing._
+import me.elrod.hax.commands.Command._
 
 object Hax {
   def main(args: Array[String]) {
@@ -87,118 +86,5 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
       }
       case _ =>
     }
-  }
-
-  /** Fetch the title of a given URL.
-   *
-   * Fetch the contents of a <title>...</title> tag from a URL using
-   * the Dispatch/JSoup set of libraries.
-   */
-  private def fetchURLTitle(theURL: String): String = {
-    val https = new Http with HttpsLeniency
-    val title = https(url(theURL) </> { html => html.title }).toString
-    if (!title.isEmpty)
-      "\"" + title.replace("\n", "").replaceAll("""\s+""", " ") + "\""
-    else
-      ""
-  }
-
-  private def fetchTweet(tweetID: String): String = {
-    val https = new Http with HttpsLeniency
-    val twitterURL = "http://api.twitter.com/1/statuses/show.xml?id=" + tweetID
-    https(url(twitterURL) </> { status => status.select("text").text }).toString
-  }
-
-  /** Dispense positive or negaitve karma to a given item.
-   *
-   * Returns a big fat cup of nothing.
-   */
-  private def dispenseKarma(item_key: String, direction: String) {
-    database withSession {
-      // Check if the item exists already.
-      var karma = for(k <- Karma if k.item === item_key) yield k.karma
-      if (karma.list.isEmpty) {
-        Karma.item ~ Karma.karma insert(item_key, 0)
-        karma = for(k <- Karma if k.item === item_key) yield k.karma
-      }
-
-      direction match {
-        case "up" => karma.update(karma.first + 1)
-        case "down" => karma.update(karma.first - 1)
-      }
-    }
-  }
-
-  /** Get the karma for a given item.
-   *
-   * Returns an integer of the karma for an item.
-   */
-  private def getKarma(item_key: String): Int = {
-    database withSession {
-      // Check if the item exists already.
-      var karma = for(k <- Karma if k.item === item_key) yield k.karma
-      if (karma.list.isEmpty) 0
-      else karma.first
-    }
-  }
-
-  /** Add a quote to the quote database. Return nothing.
-   */
-  private def addQuote(quote: String, nick: String, channel: String): Int = {
-    database withSession {
-      val timestamp = (new Date).getTime.toString
-      Quote.quote ~ Quote.added_by ~ Quote.channel ~ Quote.timestamp insert(quote, nick, channel, timestamp)
-      Query(Quote.count).first.toInt
-    }
-  }
-
-  /** Pick a random Quote from the database and return it.
-   *
-   * This method is a bit inefficient, as rather than using ORDER BY RANDOM(),
-   * (can ScalaQuery do that? TODO) it makes two queries, one to get the number
-   * of quotes, then another to fetch a random one within that range.
-   */
-  private def randomQuote(): String = {
-    database withSession {
-      val randomQuoteID: Int = scala.util.Random.nextInt(Query(Quote.count).first + 1)
-      val quote = for(q <- Quote if q.id === randomQuoteID) yield q.id ~ q.quote
-      quote.first match {
-        case(id, quote) => { "(" + id + ") " + quote }
-      }
-    }
-  }
-
-  /** Fetch the weather for a given city.
-   *
-   * Uses the Google Weather API.
-   * Stolen from duckinator:
-   * https://github.com/duckinator/scala-stuff/blob/master/weather/weather.scala
-   */
-  private def fetchWeather(location: String): String = {
-    val https = new Http with HttpsLeniency
-    val myUrl = "http://www.google.com/ig/api?weather=" + java.net.URLEncoder.encode(location, "UTF-8")
-    
-    val weather = https(url(myUrl) </> {
-      xml => {
-        if (xml.select("condition").isEmpty) {
-          "Weather could not be retrieved."
-        } else {
-          "Weather for " +
-          xml.select("city").attr("data") +
-          ". Conditions: " +
-          xml.select("condition").attr("data") +
-          "; Temp: " +
-          xml.select("temp_f").attr("data") +
-          "F (" +
-          xml.select("temp_c").attr("data") +
-          "C). " +
-          xml.select("humidity").attr("data") +
-          ". " +
-          xml.select("wind_condition").attr("data") +
-          "."
-        }
-      }
-    })
-    weather.toString
   }
 }
