@@ -14,6 +14,9 @@ object Hax {
     bot.setVerbose(true)
     bot.connect("irc.tenthbit.net")
     bot.joinChannel("#offtopic")
+    bot.joinChannel("#bots")
+    bot.joinChannel("#programming")
+    bot.joinChannel("#flood")
   }
 }
 
