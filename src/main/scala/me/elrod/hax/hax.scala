@@ -35,7 +35,7 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
 
   val CommandWithArguments = ("^" + comChar + "(.+?) (.+)").r
   val CommandWithoutArguments = ("^" + comChar + "(.+)").r
-  val KarmaCommand = ("""(?i)^(\S+)(--|\+\+)""").r
+  val KarmaCommand = ("""(?i)^(\S+)(--|\+\+).*""").r
   val URLRegex = ("""(?i).*?(https?://[\S]+) ?.*""").r 
   val TwitterRegex = """(?i).*?https?://twitter.com/.*/status(?:es|)/(\d+) ?.*""".r
   
