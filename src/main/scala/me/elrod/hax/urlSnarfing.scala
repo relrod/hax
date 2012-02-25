@@ -14,7 +14,7 @@ object urlSnarfing {
     try {
       val http = Http(theURL).option(HttpOptions.allowUnsafeSSL).option(HttpOptions.connTimeout(2000)).option(HttpOptions.readTimeout(2000))
       val document = Jsoup.parse(http.asString)
-      document.title
+      "\"" + document.title.replace("\n", "").replaceAll("""\s+""", " ") + "\""
     } catch {
       case e: java.net.SocketTimeoutException => "<timeout>"
       case unknown => "<error> " + unknown
