@@ -8,9 +8,11 @@ import me.elrod.hax.urlSnarfing.urlSnarfing._
 import me.elrod.hax.commands.Command._
 
 object Hax {
+    System.setProperty("http.agent", "Mozilla/5.0 (X11; Linux x86_64; rv:13.0) Gecko/20120222 Firefox/13.0a1")
+
   def main(args: Array[String]) {
     val db = Database.forURL("jdbc:sqlite:hax.sqlite", driver = "org.sqlite.JDBC")
-    val bot: HaxBot = new HaxBot(nick = "Hax", database = db, ignoreNicks = List("yurbnurb", "RCMP"))
+    val bot: HaxBot = new HaxBot(nick = "Hax2", database = db, ignoreNicks = List("yurbnurb", "RCMP"))
     bot.setVerbose(true)
     bot.connect("irc.tenthbit.net")
     bot.joinChannel("#offtopic")
