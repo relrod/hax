@@ -16,6 +16,7 @@ object urlSnarfing {
       val document = Jsoup.parse(http.asString)
       val title = document.title.replace("\n", "").replaceAll("""\s+""", " ")
       if (!title.isEmpty) "\"" + title + "\""
+      else ""
     } catch {
       case e: java.net.SocketTimeoutException => "<timeout>"
       case unknown => "<error> " + unknown
