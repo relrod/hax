@@ -17,6 +17,14 @@ object Hax {
     val bot: HaxBot = new HaxBot(nick = config.getString("bot.nick"), database = db, ignoreNicks = config.getList("bot.ignores").unwrapped.toArray)
     bot.setVerbose(true)
     bot.connect(config.getString("bot.network"))
+    
+    // Try authenticating, but if the config keys aren't there, just go on, don't die.
+    try {
+      bot.sendMessage(config.getString("bot.authenticate.to"), config.getString("bot.authenticate.with"))
+    } catch {
+      case e =>
+    }
+    
     config.getList("bot.autojoin").unwrapped.toArray.foreach(channel => bot.joinChannel(channel.toString))
   }
 }

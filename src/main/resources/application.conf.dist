@@ -3,4 +3,9 @@ bot {
   ignores: [RCMP, yurbnurb, rublets]
   autojoin: ["#offtopic", "#bots", "#programming", "#flood"]
   network: irc.tenthbit.net
+
+  authenticate {
+    to: nickserv
+    with: identify hax <your pass>
+  }
 }
