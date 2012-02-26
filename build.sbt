@@ -17,3 +17,5 @@ libraryDependencies += "org.scalaj" %% "scalaj-http" % "0.2.9"
 libraryDependencies += "org.jsoup" % "jsoup" % "1.6.1"
 
 libraryDependencies += "org.scala-tools.time" % "time_2.9.1" % "0.5"
+
+libraryDependencies += "com.typesafe.config" % "config" % "0.2.1"

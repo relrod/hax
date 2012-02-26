@@ -1,4 +1,5 @@
 import org.jibble.pircbot._
+import com.typesafe.config._
 import org.scalaquery.session._
 import org.scalaquery.session.Database.threadLocalSession
 import org.scalaquery.ql.basic.BasicDriver.Implicit._
@@ -12,17 +13,15 @@ object Hax {
 
   def main(args: Array[String]) {
     val db = Database.forURL("jdbc:sqlite:hax.sqlite", driver = "org.sqlite.JDBC")
-    val bot: HaxBot = new HaxBot(nick = "Hax", database = db, ignoreNicks = List("yurbnurb", "RCMP", "rublets"))
+    val config = ConfigFactory.load()
+    val bot: HaxBot = new HaxBot(nick = config.getString("bot.nick"), database = db, ignoreNicks = config.getList("bot.ignores").unwrapped.toArray)
     bot.setVerbose(true)
-    bot.connect("irc.tenthbit.net")
-    bot.joinChannel("#offtopic")
-    bot.joinChannel("#bots")
-    bot.joinChannel("#programming")
-    bot.joinChannel("#flood")
+    bot.connect(config.getString("bot.network"))
+    config.getList("bot.autojoin").unwrapped.toArray.foreach(channel => bot.joinChannel(channel.toString))
   }
 }
 
-class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNicks: List[String] = List()) extends PircBot {
+class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNicks: Array[java.lang.Object] = Array()) extends PircBot {
   setName(nick)
   setLogin(nick)
 
