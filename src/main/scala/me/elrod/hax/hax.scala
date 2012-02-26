@@ -38,8 +38,9 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
   val CommandWithArguments = ("^" + comChar + "(.+?) (.+)").r
   val CommandWithoutArguments = ("^" + comChar + "(.+)").r
   val KarmaCommand = ("""(?i)^(\S+)(--|\+\+).*""").r
-  val URLRegex = ("""(?i).*?(https?://[\S]+) ?.*""").r 
-  val TwitterRegex = """(?i).*?https?://twitter.com/.*/status(?:es|)/(\d+) ?.*""".r
+  val URLRegex = ("""(?i).*?(https?://[\S]+).*""").r 
+  val TwitterRegex = """(?i).*?https?://twitter.com/.*/status(?:es|)/(\d+).*""".r
+  val SpotifyRegex = """(?i).*spotify:track:([\S]+).*""".r
   
   override def onMessage(channel: String, sender: String, login: String, hostname: String, message: String) {
     if (ignoreNicks.contains(sender)) return
@@ -52,6 +53,7 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
     message match {
       case TwitterRegex(tweetID) => sendMessage(channel, "\"" + fetchTweet(tweetID) + "\"")
       case URLRegex(fullURL) => sendMessage(channel, fetchURLTitle(fullURL))
+      case SpotifyRegex(trackNumber) => sendMessage(channel, spotifyTrackInfo(trackNumber))
 
       case KarmaCommand(item, karma) => {
         karma match {
