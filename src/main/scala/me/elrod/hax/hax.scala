@@ -65,6 +65,7 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
         
         command match {
           case "hit" => sendAction(channel, "hits " + arguments + "with a ><>.")
+          case "host" => sendMessage(channel, java.net.InetAddress.getAllByName(arguments).map(_.getHostAddress)).mkString(", ")
           case "aquote" => {
             val quoteID = addQuote(arguments, sender, channel)
             sendMessage(channel, sender + ": I've added your quote, #" + quoteID + ".")
