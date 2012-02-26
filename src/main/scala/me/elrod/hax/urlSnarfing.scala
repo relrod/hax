@@ -39,24 +39,37 @@ object urlSnarfing {
     }
   }
 
-  /** Return a string containing track info from a Spotify track ID
+  /** Return a string containing information from the Spotify API about a given spotify URI.
     *
-    * @param trackNumber the unique ID of the Spotify track
+    * @param mediaType the type of media to ask the API about
+    * @param identifier the unique ID of the Spotify item
     */
-  def spotifyTrackInfo(trackID: String): String = {
+  def spotifyInfo(mediaType: String, identifier: String): String = {
     try {
-      val http = Http("http://ws.spotify.com/lookup/1/?uri=spotify:track:" + trackID).option(HttpOptions.connTimeout(2000)).option(HttpOptions.readTimeout(2000))
+      val http = Http("http://ws.spotify.com/lookup/1/?uri=spotify:" + mediaType + ":" + identifier).option(HttpOptions.connTimeout(2000)).option(HttpOptions.readTimeout(2000))
       val document = Jsoup.parse(http.asString)
-      val name = document.select("name").first.text
-      val artist = document.select("artist name").text
-      val album = document.select("album name").text
-      val trackNumber = document.select("track-number").text.toInt
-      val length = document.select("length").text.toDouble
-      val popularity = document.select("popularity").text.toDouble
-      
-      // Convert time to something parsable.
-      val lengthJoda = Period.millis((length * 1000).toInt).normalizedStandard
-      "%s - %s (Album: %s [track %d]) (Popularity: %1.5f) (Length: %d minutes, %d seconds)".format(artist, name, album, trackNumber, popularity, lengthJoda.getMinutes, lengthJoda.getSeconds)
+
+      mediaType match {
+        case "track" => {
+          val name = document.select("name").first.text
+          val artist = document.select("artist name").text
+          val album = document.select("album name").text
+          val trackNumber = document.select("track-number").text.toInt
+          val length = document.select("length").text.toDouble
+          val popularity = document.select("popularity").text.toDouble
+          
+          // Convert time to something parsable.
+          val lengthJoda = Period.millis((length * 1000).toInt).normalizedStandard
+          "%s - %s (Album: %s [track %d]) (Popularity: %1.5f) (Length: %d minutes, %d seconds)".format(artist, name, album, trackNumber, popularity, lengthJoda.getMinutes, lengthJoda.getSeconds)
+        }
+        case "artist" => document.select("name").first.text
+        case "album" => {
+          val name = document.select("name").first.text
+          val artistName = document.select("artist name").text
+          val released = document.select("released").text
+          "Album: %s - Artist: %s - Released: %s".format(name, artistName, released)
+        }
+      }
     } catch {
       case e: java.net.SocketTimeoutException => "<timeout>"
       case unknown => "<error> " + unknown

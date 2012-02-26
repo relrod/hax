@@ -12,7 +12,7 @@ object Hax {
 
   def main(args: Array[String]) {
     val db = Database.forURL("jdbc:sqlite:hax.sqlite", driver = "org.sqlite.JDBC")
-    val bot: HaxBot = new HaxBot(nick = "Hax", database = db, ignoreNicks = List("yurbnurb", "RCMP", "rublets"))
+    val bot: HaxBot = new HaxBot(nick = "Hax2", database = db, ignoreNicks = List("yurbnurb", "RCMP", "rublets"))
     bot.setVerbose(true)
     bot.connect("irc.tenthbit.net")
     bot.joinChannel("#offtopic")
@@ -40,7 +40,7 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
   val KarmaCommand = ("""(?i)^(\S+)(--|\+\+).*""").r
   val URLRegex = ("""(?i).*?(https?://[\S]+).*""").r 
   val TwitterRegex = """(?i).*?https?://twitter.com/.*/status(?:es|)/(\d+).*""".r
-  val SpotifyRegex = """(?i).*spotify:track:([\S]+).*""".r
+  val SpotifyRegex = """(?i).*spotify:([\S]+):([\S]+).*""".r
   
   override def onMessage(channel: String, sender: String, login: String, hostname: String, message: String) {
     if (ignoreNicks.contains(sender)) return
@@ -53,7 +53,7 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
     message match {
       case TwitterRegex(tweetID) => sendMessage(channel, "\"" + fetchTweet(tweetID) + "\"")
       case URLRegex(fullURL) => sendMessage(channel, fetchURLTitle(fullURL))
-      case SpotifyRegex(trackNumber) => sendMessage(channel, spotifyTrackInfo(trackNumber))
+      case SpotifyRegex(mediaType, identifier) => sendMessage(channel, spotifyInfo(mediaType, identifier))
 
       case KarmaCommand(item, karma) => {
         karma match {
