@@ -12,7 +12,7 @@ object Hax {
 
   def main(args: Array[String]) {
     val db = Database.forURL("jdbc:sqlite:hax.sqlite", driver = "org.sqlite.JDBC")
-    val bot: HaxBot = new HaxBot(nick = "Hax2", database = db, ignoreNicks = List("yurbnurb", "RCMP", "rublets"))
+    val bot: HaxBot = new HaxBot(nick = "Hax", database = db, ignoreNicks = List("yurbnurb", "RCMP", "rublets"))
     bot.setVerbose(true)
     bot.connect("irc.tenthbit.net")
     bot.joinChannel("#offtopic")
