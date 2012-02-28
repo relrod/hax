@@ -61,7 +61,7 @@ object urlSnarfing {
           
           // Convert time to something parsable.
           val lengthJoda = Period.millis((length * 1000).toInt).normalizedStandard
-          "%s - %s (Album: %s [track %d]) (Popularity: %1.5f) (Length: %d:d)".format(artist, name, album, trackNumber, popularity, lengthJoda.getMinutes, lengthJoda.getSeconds)
+          "%s - %s (Album: %s [track %d]) (Popularity: %1.5f) (Length: %d:%d)".format(artist, name, album, trackNumber, popularity, lengthJoda.getMinutes, lengthJoda.getSeconds)
         }
         case "artist" => document.select("name").first.text
         case "album" => {
