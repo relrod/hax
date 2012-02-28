@@ -104,4 +104,7 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
       case _ =>
     }
   }
+
+  override def onAction(sender: String, login: String, hostname: String, target: String, action: String) =
+    onMessage(target, sender, login, hostname, action)
 }
