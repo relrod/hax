@@ -47,6 +47,7 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
   val KarmaCommand = ("""(?i)^(\S+)(--|\+\+).*""").r
   val URLRegex = ("""(?i).*?(https?://[\S]+).*""").r 
   val TwitterRegex = """(?i).*?https?://twitter.com/.*/status(?:es|)/(\d+).*""".r
+  val YouTubeRegex = """(?i).*https?://(?:www\.)?youtu(?:\.be/|be\.com/watch\?(?:.+&)?v=)(.*).*""".r
   val SpotifyRegex = """(?i).*spotify:([\S]+):([\S]+).*""".r
   
   override def onMessage(channel: String, sender: String, login: String, hostname: String, message: String) {
@@ -58,6 +59,7 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
     }
 
     message match {
+      case YouTubeRegex(videoID) => sendMessage(channel, youtubeInfo(videoID))
       case TwitterRegex(tweetID) => sendMessage(channel, "\"" + fetchTweet(tweetID) + "\"")
       case URLRegex(fullURL) => sendMessage(channel, fetchURLTitle(fullURL))
       case SpotifyRegex(mediaType, identifier) => sendMessage(channel, spotifyInfo(mediaType, identifier))

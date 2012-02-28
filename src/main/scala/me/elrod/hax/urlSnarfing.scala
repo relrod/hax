@@ -2,6 +2,7 @@ package me.elrod.hax.urlSnarfing
 import scalaj.http.{Http,HttpOptions}
 import org.jsoup.Jsoup
 import org.scala_tools.time.Imports._
+import net.liftweb.json._
 
 object urlSnarfing {
   /** Return the title of a given URL.
@@ -60,7 +61,7 @@ object urlSnarfing {
           
           // Convert time to something parsable.
           val lengthJoda = Period.millis((length * 1000).toInt).normalizedStandard
-          "%s - %s (Album: %s [track %d]) (Popularity: %1.5f) (Length: %d minutes, %d seconds)".format(artist, name, album, trackNumber, popularity, lengthJoda.getMinutes, lengthJoda.getSeconds)
+          "%s - %s (Album: %s [track %d]) (Popularity: %1.5f) (Length: %d:d)".format(artist, name, album, trackNumber, popularity, lengthJoda.getMinutes, lengthJoda.getSeconds)
         }
         case "artist" => document.select("name").first.text
         case "album" => {
@@ -70,6 +71,29 @@ object urlSnarfing {
           "Album: %s - Artist: %s - Released: %s".format(name, artistName, released)
         }
       }
+    } catch {
+      case e: java.net.SocketTimeoutException => "<timeout>"
+      case unknown => "<error> " + unknown
+    }
+  }
+
+  /** Return information about a youtube video.
+    *
+    * @param the YouTube video ID
+    */
+  def youtubeInfo(videoID: String): String = {
+    try {
+      val http = Http("https://gdata.youtube.com/feeds/api/videos?alt=jsonc&v=2&max-results=1&q=" + videoID).option(HttpOptions.connTimeout(4000)).option(HttpOptions.readTimeout(4000)).asString
+      val json: JValue = parse(http)
+      val lengthJoda = Period.seconds(compact(render(json \ "data" \ "items" \ "duration")).toInt).normalizedStandard
+      "\"%s\" [%d:%d] by %s (%,d views, %1.3f%% thumbs-up)".format(
+        (json \ "data" \ "items" \ "title").values.toString,
+        lengthJoda.getMinutes,
+        lengthJoda.getSeconds,
+        (json \ "data" \ "items" \ "uploader").values.toString,
+        compact(render(json \ "data" \ "items" \ "viewCount")).toInt,
+        (compact(render(json \ "data" \ "items" \ "rating")).toDouble / 5) * 100
+      )
     } catch {
       case e: java.net.SocketTimeoutException => "<timeout>"
       case unknown => "<error> " + unknown
