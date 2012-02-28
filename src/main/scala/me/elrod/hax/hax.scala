@@ -47,8 +47,10 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
   val KarmaCommand = ("""(?i)^(\S+)(--|\+\+).*""").r
   val URLRegex = ("""(?i).*?(https?://\S+).*""").r 
   val TwitterRegex = """(?i).*?https?://twitter.com/.*/status(?:es|)/(\d+).*""".r
-  val YouTubeRegex = """(?i).*https?://(?:www\.)?youtu(?:\.be/|be\.com/watch\?(?:.+&)?v=)(\S+).*""".r
   val SpotifyRegex = """(?i).*spotify:(\S+):(\S+).*""".r
+
+  // Thanks @duckinator for the regex.
+  val YouTubeRegex = """(?i).*https?://(?:www\.)?youtu(?:\.be/|be\.com/watch\?(?:.+&)?v=)(\S+).*""".r
   
   override def onMessage(channel: String, sender: String, login: String, hostname: String, message: String) {
     if (ignoreNicks.contains(sender)) return
