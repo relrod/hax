@@ -53,14 +53,10 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
   val YouTubeRegex = """(?i).*https?://(?:www\.)?youtu(?:\.be/|be\.com/watch\?(?:.+&)?v=)(\S+).*""".r
   
   override def onMessage(channel: String, sender: String, login: String, hostname: String, message: String) {
-    if (ignoreNicks.contains(sender)) return
-
-    if (message == "`meep") {
-      sendMessage(channel, "meep")
-      return
-    }
+    if (ignoreNicks.contains(sender) || message.startsWith("^")) return
 
     message match {
+      case "`meep" => sendMessage(channel, "meep")
       case YouTubeRegex(videoID) => sendMessage(channel, youtubeInfo(videoID))
       case TwitterRegex(tweetID) => sendMessage(channel, "\"" + fetchTweet(tweetID) + "\"")
       case URLRegex(fullURL) => sendMessage(channel, fetchURLTitle(fullURL))
