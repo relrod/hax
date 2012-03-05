@@ -92,7 +92,10 @@ object urlSnarfing {
         lengthJoda.getSeconds,
         (json \ "data" \ "items" \ "uploader").values.toString,
         compact(render(json \ "data" \ "items" \ "viewCount")).toInt,
-        (compact(render(json \ "data" \ "items" \ "rating")).toDouble / 5) * 100
+        (json \ "data" \ "items" \ "rating") match {
+          case JNothing => 0.0
+          case value => (compact(render(value)).toDouble / 5) * 100
+        }
       )
     } catch {
       case e: java.net.SocketTimeoutException => "<timeout>"
