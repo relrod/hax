@@ -86,15 +86,15 @@ object urlSnarfing {
       val http = Http("https://gdata.youtube.com/feeds/api/videos?alt=jsonc&v=2&max-results=1&q=" + videoID).option(HttpOptions.connTimeout(4000)).option(HttpOptions.readTimeout(4000)).asString
       val json: JValue = parse(http)
       val lengthJoda = Period.seconds(compact(render(json \ "data" \ "items" \ "duration")).toInt).normalizedStandard
-      "\"%s\" [%02d:%02d] by %s (%,d views, %1.3f%% thumbs-up)".format(
+      "\"%s\" [%02d:%02d] by %s (%,d views%s)".format(
         (json \ "data" \ "items" \ "title").values.toString,
         lengthJoda.getMinutes,
         lengthJoda.getSeconds,
         (json \ "data" \ "items" \ "uploader").values.toString,
         compact(render(json \ "data" \ "items" \ "viewCount")).toInt,
         (json \ "data" \ "items" \ "rating") match {
-          case JNothing => 0.0
-          case value => (compact(render(value)).toDouble / 5) * 100
+          case JNothing => ""
+          case value => ", %1.3f%% thumbs-up".format((compact(render(value)).toDouble / 5) * 100)
         }
       )
     } catch {
