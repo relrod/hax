@@ -83,16 +83,16 @@ object urlSnarfing {
     */
   def youtubeInfo(videoID: String): String = {
     try {
-      val http = Http("https://gdata.youtube.com/feeds/api/videos?alt=jsonc&v=2&max-results=1&q=" + videoID).option(HttpOptions.connTimeout(4000)).option(HttpOptions.readTimeout(4000)).asString
+      val http = Http("https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=jsonc".format(videoID)).option(HttpOptions.connTimeout(4000)).option(HttpOptions.readTimeout(4000)).asString
       val json: JValue = parse(http)
-      val lengthJoda = Period.seconds(compact(render(json \ "data" \ "items" \ "duration")).toInt).normalizedStandard
+      val lengthJoda = Period.seconds(compact(render(json \ "data" \ "duration")).toInt).normalizedStandard
       "\"%s\" [%02d:%02d] by %s (%,d views%s)".format(
-        (json \ "data" \ "items" \ "title").values.toString,
+        (json \ "data" \ "title").values.toString,
         lengthJoda.getMinutes,
         lengthJoda.getSeconds,
-        (json \ "data" \ "items" \ "uploader").values.toString,
-        compact(render(json \ "data" \ "items" \ "viewCount")).toInt,
-        (json \ "data" \ "items" \ "rating") match {
+        (json \ "data" \ "uploader").values.toString,
+        compact(render(json \ "data" \ "viewCount")).toInt,
+        (json \ "data" \ "rating") match {
           case JNothing => ""
           case value => ", %1.3f%% thumbs-up".format((compact(render(value)).toDouble / 5) * 100)
         }
