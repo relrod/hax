@@ -16,5 +16,6 @@ libraryDependencies ++= Seq(
   "net.liftweb" %% "lift-json" % "2.4",
   "org.jsoup" % "jsoup" % "1.6.1",
   "org.scala-tools.time" % "time_2.9.1" % "0.5",
-  "com.typesafe.config" % "config" % "0.2.1"
+  "com.typesafe.config" % "config" % "0.2.1",
+  "org.scalatest" %% "scalatest" % "1.7.1" % "test"
 )
