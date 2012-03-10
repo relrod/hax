@@ -48,6 +48,7 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
   val URLRegex = ("""(?i).*?(https?://\S+).*""").r 
   val TwitterRegex = """(?i).*?https?://twitter.com/.*/status(?:es|)/(\d+).*""".r
   val SpotifyRegex = """(?i).*spotify:(\w+):(\w+).*""".r
+  val IPRegex = """^(\d[\d\.]+\d)$""".r
 
   // Thanks @duckinator for the regex.
   val YouTubeRegex = """(?i).*https?://(?:www\.)?youtu(?:\.be/|be\.com/watch\?(?:.+&)?v=)(\S[^&]+).*""".r
@@ -74,7 +75,12 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
         
         command match {
           case "hit" => sendAction(channel, "hits " + arguments + "with a ><>.")
-          case "host" => sendMessage(channel, java.net.InetAddress.getAllByName(arguments).map(_.getHostAddress).mkString(", "))
+          case "host" => {
+            sendMessage(channel, arguments match {
+              case IPRegex(ip) => java.net.InetAddress.getByName(ip).getHostName()
+              case unknown => java.net.InetAddress.getAllByName(arguments).map(_.getHostAddress).mkString(", ")
+            })
+          }
           case "aquote" => {
             val quoteID = addQuote(arguments, sender, channel)
             sendMessage(channel, sender + ": I've added your quote, #" + quoteID + ".")
