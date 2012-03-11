@@ -51,7 +51,7 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
   val IPRegex = """^(\d[\d\.]+\d)$""".r
 
   // Thanks @duckinator for the regex.
-  val YouTubeRegex = """(?i).*https?://(?:www\.)?youtu(?:\.be/|be\.com/watch\?(?:.+&)?v=)(\S[^&]+).*""".r
+  val YouTubeRegex = """(?i).*https?://(?:www\.)?youtu(?:\.be/|be\.com/watch\?(?:.+&)?v=)(\S[^&#]+).*""".r
   
   override def onMessage(channel: String, sender: String, login: String, hostname: String, message: String) {
     if (ignoreNicks.contains(sender) || message.startsWith("^")) return
