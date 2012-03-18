@@ -10,6 +10,10 @@ class UrlSnarfingSpecs extends FunSpec {
     it("should be able to retrieve info from videos that have dashes in them") {
       assert(youtubeInfo("WSeNSzJ2-Jw").startsWith("\"SKRILLEX - Scary"))
     }
+
+    it("should be able to retrieve info from videos that have dashes and underscores in them") {
+      assert(youtubeInfo("jQ-aWFYT_SU").startsWith("\"ZCorp's 3D Printer"))
+    }
   }
 
   describe("URL title tag snarfing") {
