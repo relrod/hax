@@ -59,14 +59,6 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
 
     message match {
       case "`meep" => sendMessage(channel, "meep")
-      case YouTubeRegex(videoID) => sendMessage(channel, youtubeInfo(videoID))
-      case TwitterRegex(tweetID) => sendMessage(channel, "\"" + fetchTweet(tweetID) + "\"")
-      case URLRegex(fullURL) => sendMessage(channel, fetchURLTitle(fullURL))
-      case SpotifyRegex(mediaType, identifier) =>
-        sendMessage(channel, spotifyInfo(mediaType, identifier))
-      case WikipediaRegex(articleName) =>
-        sendMessage(channel, "https://en.wikipedia.org/wiki/" + java.net.URLEncoder.encode(articleName, "UTF-8").replace("+", "%20"))
-
       case KarmaCommand(item, karma) => {
         karma match {
           case "++" => dispenseKarma(item.toLowerCase, "up")
@@ -107,6 +99,16 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
           case _ =>
         }
       }
+
+      case YouTubeRegex(videoID) => sendMessage(channel, youtubeInfo(videoID))
+      case TwitterRegex(tweetID) => sendMessage(channel, "\"" + fetchTweet(tweetID) + "\"")
+      case URLRegex(fullURL) => sendMessage(channel, fetchURLTitle(fullURL))
+      case SpotifyRegex(mediaType, identifier) =>
+        sendMessage(channel, spotifyInfo(mediaType, identifier))
+      case WikipediaRegex(articleName) =>
+        sendMessage(channel, "https://en.wikipedia.org/wiki/" + java.net.URLEncoder.encode(articleName, "UTF-8").replace("+", "%20"))
+
+
       case _ =>
     }
   }
