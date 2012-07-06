@@ -105,8 +105,8 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
       case URLRegex(fullURL) => sendMessage(channel, fetchURLTitle(fullURL))
       case SpotifyRegex(mediaType, identifier) =>
         sendMessage(channel, spotifyInfo(mediaType, identifier))
-      case WikipediaRegex(articleName) =>
-        sendMessage(channel, "https://en.wikipedia.org/wiki/" + java.net.URLEncoder.encode(articleName, "UTF-8").replace("+", "%20"))
+      //case WikipediaRegex(articleName) =>
+      //  sendMessage(channel, "https://en.wikipedia.org/wiki/" + java.net.URLEncoder.encode(articleName, "UTF-8").replace("+", "%20"))
 
 
       case _ =>
