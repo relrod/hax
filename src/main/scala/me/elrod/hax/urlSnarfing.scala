@@ -14,8 +14,11 @@ object urlSnarfing {
     */
   def fetchURLTitle(theURL: String): String = {
     try {
-      val http = Http(theURL).option(HttpOptions.allowUnsafeSSL).option(HttpOptions.connTimeout(4000)).option(HttpOptions.readTimeout(4000))
-      val document = Jsoup.parse(http.asString)
+      val document = Jsoup.connect(theURL)
+                          .header("Accept-Language", "en-us,en;q=0.5")
+                          .header("Accept-Encoding", "gzip, deflate")
+                          .get()
+
       val title = document.title.replace("\n", "").replaceAll("""\s+""", " ")
       if (!title.isEmpty) "\"" + title + "\""
       else ""
