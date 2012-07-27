@@ -24,6 +24,7 @@ object urlSnarfing {
       else ""
     } catch {
       case e: java.net.SocketTimeoutException => "<timeout>"
+      case e: java.io.IOException => ""
       case unknown => "<error> " + unknown
     }
   }
