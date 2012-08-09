@@ -10,6 +10,6 @@ resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/release
 
 libraryDependencies ++= Seq(
   "pircbot" % "pircbot" % "1.5.0",
-  "com.typesafe.config" % "config" % "0.5.0",
+  "com.typesafe" % "config" % "0.5.0",
   "com.typesafe" % "slick_2.10.0-M6" % "0.11.0"
 )
