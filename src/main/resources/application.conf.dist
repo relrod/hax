@@ -1,11 +1,17 @@
 bot {
-  nick: Hax2
+  nick: Hax-v2
   ignores: [RCMP, yurbnurb, rublets]
-  autojoin: ["#offtopic", "#bots", "#programming", "#flood"]
-  network: irc.tenthbit.net
+  autojoin: ["#codeblock"]
+  verbose: true
+  comchar: "."
+  
+  server: irc.tenthbit.net
+  port: 6667
+  password: ""
 
   authenticate {
     to: nickserv
-    with: identify hax <your pass>
+    with: identify hax YourPassw0rd
   }
+
 }

@@ -4,7 +4,10 @@ version := "2.0.0"
 
 scalaVersion := "2.9.2"
 
-scalacOptions += "-deprecation -Xexperimental"
+scalacOptions ++= Seq(
+  "-deprecation",
+  "-Xexperimental"
+)
 
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
