@@ -2,6 +2,7 @@ package me.elrod.hax
 
 /** Handle Hax command parsing. */
 object Command {
+  val IPRegex = """^(\d[\d\.]+\d)$""".r
   
   /** Commands without arguments.
    *
@@ -11,11 +12,11 @@ object Command {
   def apply(command: String): Option[String] = command match {
     case "time" => Some(new java.util.Date().toString)
     case "meme" => Some(io.Source.fromURL("http://api.automeme.net/text")
-                            .mkString
-                            .lines
-                            .toList
-                            .head)
-    case c => None
+                        .mkString
+                        .lines
+                        .toList
+                        .head)
+    case _ => None
   }
 
   /** Commands with arguments.
@@ -28,6 +29,12 @@ object Command {
     command.drop(0) match {
       case "slap" | "fishify" =>
         Some("\001ACTION slaps %s with a ><>.\001".format(arguments))
+      case "host" | "dns" => IPRegex findFirstIn arguments match {
+        case Some(ip) => Some(java.net.InetAddress.getByName(ip).getHostName())
+        case None => Some(java.net.InetAddress.getAllByName(arguments)
+                          .map(_.getHostAddress)
+                          .mkString(", "))
+      }
       case _ => None
     }
   }
