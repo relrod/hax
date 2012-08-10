@@ -52,6 +52,13 @@ class Hax(config: Config) extends PircBot {
           // Commands with no arguments here.
           command.drop(comchar.length) match {
             case "time" => sendMessage(channel, new java.util.Date().toString)
+            case "meme" => sendMessage(channel,
+                                       io.Source.fromURL(
+                                         "http://api.automeme.net/text")
+                                       .mkString
+                                       .lines
+                                       .toList
+                                       .head)
             case _ =>
           }
         }
