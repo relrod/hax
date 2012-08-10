@@ -1,4 +1,4 @@
-package hax
+package me.elrod.hax
 import org.jibble.pircbot._
 import com.typesafe.config._
 import scala.collection.JavaConverters._
@@ -40,28 +40,16 @@ class Hax(config: Config) extends PircBot {
                          message: String) {
     if (message startsWith comchar)
       message.split(" ", 2) match {
-        case Array(command, arguments) => {
-          // Commands with arguments here.
-          command.drop(comchar.length) match {
-            case "slap" => sendAction(channel,
-                                      "slaps %s with a ><>.".format(arguments))
+        case Array(command) =>
+          Command(command.drop(comchar.length)) match {
+            case Some(response) => sendMessage(channel, response)
             case _ =>
           }
-        }
-        case Array(command) => {
-          // Commands with no arguments here.
-          command.drop(comchar.length) match {
-            case "time" => sendMessage(channel, new java.util.Date().toString)
-            case "meme" => sendMessage(channel,
-                                       io.Source.fromURL(
-                                         "http://api.automeme.net/text")
-                                       .mkString
-                                       .lines
-                                       .toList
-                                       .head)
+        case Array(command, arguments) =>
+          Command(command.drop(comchar.length), arguments) match {
+            case Some(response) => sendMessage(channel, response)
             case _ =>
           }
-        }
       }
   }
 }
