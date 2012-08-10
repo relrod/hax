@@ -21,7 +21,7 @@ class Hax(config: Config) extends PircBot {
           config.getInt("bot.port"),
           config.getString("bot.password"))
   config.getStringList("bot.autojoin").asScala.foreach(joinChannel)
-  val comchar = config.getString("comchar")
+  val comchar = config.getString("bot.comchar")
 
   /** Gets called every time a message gets sent to the channel.
     *
@@ -38,9 +38,23 @@ class Hax(config: Config) extends PircBot {
                          login: String,
                          hostname: String,
                          message: String) {
-    message match {
-      case ".time" => sendMessage(channel,
-                                 new java.util.Date().toString)
-    }
+    if (message startsWith comchar)
+      message.split(" ", 2) match {
+        case Array(command, arguments) => {
+          // Commands with arguments here.
+          command.drop(comchar.length) match {
+            case "slap" => sendAction(channel,
+                                      "slaps %s with a ><>.".format(arguments))
+            case _ =>
+          }
+        }
+        case Array(command) => {
+          // Commands with no arguments here.
+          command.drop(comchar.length) match {
+            case "time" => sendMessage(channel, new java.util.Date().toString)
+            case _ =>
+          }
+        }
+      }
   }
 }
