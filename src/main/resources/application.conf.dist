@@ -4,7 +4,7 @@ bot {
   autojoin: ["#codeblock"]
   verbose: true
   comchar: "."
-  
+
   server: irc.tenthbit.net
   port: 6667
   password: ""
@@ -12,6 +12,11 @@ bot {
   authenticate {
     to: nickserv
     with: identify hax YourPassw0rd
+  }
+
+  database {
+    jdbc: "jdbc:sqlite::memory:"
+    driver: "org.sqlite.JDBC"
   }
 
 }
