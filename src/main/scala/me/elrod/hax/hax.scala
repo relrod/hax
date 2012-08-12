@@ -102,7 +102,6 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
 
       case YouTubeRegex(videoID) => sendMessage(channel, youtubeInfo(videoID))
       case TwitterRegex(tweetID) => sendMessage(channel, "\"" + fetchTweet(tweetID) + "\"")
-      case URLRegex(fullURL) => sendMessage(channel, fetchURLTitle(fullURL))
       case SpotifyRegex(mediaType, identifier) =>
         sendMessage(channel, spotifyInfo(mediaType, identifier))
       //case WikipediaRegex(articleName) =>
