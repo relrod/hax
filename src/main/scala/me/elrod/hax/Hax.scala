@@ -57,5 +57,11 @@ class Hax(config: Config) extends PircBot {
             case _ =>
           }
       }
+    else
+      message match {
+        case URLSnarfers.URLRegex(url) =>
+          URLSnarfers.fetchTitle(url, this, channel)
+        case _ =>
+      }
   }
 }
