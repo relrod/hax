@@ -1,10 +1,11 @@
 package me.elrod.hax
-import scala.concurrent.{Future, future}
+import scala.concurrent.{ Future, future }
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.jsoup.Jsoup
 
 object URLSnarfers {
   val URLRegex = """(?i).*?(https?://\S+).*""".r
+
   def fetchTitle(theURL: String, bot: Hax, channel: String) {
     val f: Future[Option[String]] = future {
       val document = Jsoup.connect(theURL)

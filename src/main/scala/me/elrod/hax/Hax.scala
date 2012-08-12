@@ -26,7 +26,7 @@ class Hax(config: Config) extends PircBot {
   config.getStringList("bot.autojoin").asScala.foreach(joinChannel)
   val comchar = config.getString("bot.comchar")
   val db = Database.forURL(config.getString("bot.database.jdbc"),
-                           driver = config.getString("bot.database.driver"))
+    driver = config.getString("bot.database.driver"))
 
   /**
    * Gets called every time a message gets sent to the channel.
