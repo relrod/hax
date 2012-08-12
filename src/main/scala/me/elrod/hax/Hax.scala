@@ -42,6 +42,7 @@ class Hax(config: Config) extends PircBot {
     login: String,
     hostname: String,
     message: String) {
+    if (config.getStringList("bot.ignores").asScala contains sender) return
     val ircMessage = IRCMessage(this, channel, sender, login, hostname, message)
     if (message startsWith comchar)
       message.split(" ", 2) match {
