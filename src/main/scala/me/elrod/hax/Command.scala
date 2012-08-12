@@ -8,12 +8,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 object Command {
   val IPRegex = """^(\d[\d\.]+\d)$""".r
 
-  /**
-   * Commands without arguments.
-   *
-   * @param command the command that was called
-   * @return an Option[String] containing the response
-   */
+  /** Commands without arguments.
+    *
+    * @param command the command that was called
+    * @return an Option[String] containing the response
+    */
   def apply(command: String,
     db: Database,
     message: IRCMessage) = command match {
@@ -34,13 +33,12 @@ object Command {
     case _ => None
   }
 
-  /**
-   * Commands with arguments.
-   *
-   * @param command the command that was called
-   * @param arguments a String containing arguments for the command
-   * @return an Option[String] containing the response
-   */
+  /** Commands with arguments.
+    *
+    * @param command the command that was called
+    * @param arguments a String containing arguments for the command
+    * @return an Option[String] containing the response
+    */
   def apply(command: String,
     arguments: String,
     db: Database,
