@@ -59,4 +59,6 @@ class Hax(config: Config) extends PircBot {
         case _ =>
       }
   }
+
+  override def onDisconnect() = new Hax(config)
 }
