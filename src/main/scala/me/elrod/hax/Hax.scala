@@ -44,23 +44,18 @@ class Hax(config: Config) extends PircBot {
     login: String,
     hostname: String,
     message: String) {
+    val ircMessage = IRCMessage(this, channel, sender, login, hostname, message)
     if (message startsWith comchar)
       message.split(" ", 2) match {
         case Array(command) =>
-          Command(command.drop(comchar.length), db) match {
-            case Some(response) => sendMessage(channel, response)
-            case _ =>
-          }
+          Command(command.drop(comchar.length), db, ircMessage)
         case Array(command, arguments) =>
-          Command(command.drop(comchar.length), arguments, db) match {
-            case Some(response) => sendMessage(channel, response)
-            case _ =>
-          }
+          Command(command.drop(comchar.length), arguments, db, ircMessage)
       }
     else
       message match {
         case URLSnarfers.URLRegex(url) =>
-          URLSnarfers.fetchTitle(url, this, channel)
+          URLSnarfers.fetchTitle(url, ircMessage)
         case _ =>
       }
   }

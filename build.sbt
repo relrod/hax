@@ -17,5 +17,6 @@ libraryDependencies ++= Seq(
   "com.typesafe" % "slick_2.10.0-M6" % "0.11.0",
   "org.slf4j" % "slf4j-nop" % "1.6.6",
   "org.xerial" % "sqlite-jdbc" % "3.7.2",
-  "org.jsoup" % "jsoup" % "1.6.3"
+  "org.jsoup" % "jsoup" % "1.6.3",
+  "net.liftweb" % "lift-json_2.9.1" % "2.4"
 )
