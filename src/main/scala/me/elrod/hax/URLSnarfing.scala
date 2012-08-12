@@ -6,19 +6,21 @@ import org.jsoup.Jsoup
 object URLSnarfers {
   val URLRegex = """(?i).*?(https?://\S+).*""".r
 
-  def fetchTitle(theURL: String, bot: Hax, channel: String) {
-    val f: Future[Option[String]] = future {
-      val document = Jsoup.connect(theURL)
+  def getFutureForURL(theURL: String) = {
+    future {
+      Jsoup.connect(theURL)
         .header("Accept-Language", "en-us,en;q=0.5")
         .header("Accept-Encoding", "gzip, deflate")
         .get()
-      val title = document.title.replace("\n", "").replaceAll("""\s+""", " ")
-      if (!title.isEmpty) Some("\"" + title + "\"") else None
     }
+  }
+
+  def fetchTitle(theURL: String, bot: Hax, channel: String) {
+    val f = getFutureForURL(theURL)
     f onSuccess {
-      case e => e match {
-        case Some(e) => bot.sendMessage(channel, e)
-        case _ =>
+      case document => {
+        val title = document.title.replace("\n", "").replaceAll("""\s+""", " ")
+        if (!title.isEmpty) bot.sendMessage(channel, "\"" + title + "\"")
       }
     }
   }
