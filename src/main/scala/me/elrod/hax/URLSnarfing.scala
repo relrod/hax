@@ -15,7 +15,10 @@ object URLSnarfers {
       if (!title.isEmpty) Some("\"" + title + "\"") else None
     }
     f onSuccess {
-      case e => bot.sendMessage(channel, e.mkString)
+      case e => e match {
+        case Some(e) => bot.sendMessage(channel, e)
+        case _ =>
+      }
     }
   }
 }
