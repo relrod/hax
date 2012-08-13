@@ -16,9 +16,6 @@ object Command {
   def apply(command: String,
     db: Database,
     message: IRCMessage) = command match {
-    case "time" => message.bot.sendMessage(
-      message.channel,
-      new java.util.Date().toString)
     case "dbtest" => message.bot.sendMessage(message.channel, db.toString)
     case "meme" => {
       val meme = URLSnarfers.getFutureRawBodyForURL(
@@ -47,38 +44,37 @@ object Command {
         message.bot.sendAction(
           message.channel,
           "slaps %s with a ><>.".format(arguments))
-      case "can" | "realcan" => {
-
-        val url = command match {
-          case "can" => "http://can.tenthbit.net/"
-          case "realcan" => "http://calendaraboutnothing.com/"
-        }
-
-        val can = URLSnarfers.getFutureRawBodyForURL(
-          url + "/~" + arguments + ".json")
-
-        can onSuccess {
-          case response => {
-            val json = parse(response)
-            message.bot.sendMessage(
-              message.channel,
-              "Current streak: %s, Longest streak: %s".format(
-                (json \ "current_streak").values.toString,
-                (json \ "longest_streak").values.toString))
-          }
-        }
+    case "can" | "realcan" => {
+      val url = command match {
+        case "can" => "http://can.tenthbit.net/"
+        case "realcan" => "http://calendaraboutnothing.com/"
       }
-      case "host" | "dns" => IPRegex findFirstIn arguments match {
-        case Some(ip) =>
+
+      val can = URLSnarfers.getFutureRawBodyForURL(
+        url + "/~" + arguments + ".json")
+
+      can onSuccess {
+        case response => {
+          val json = parse(response)
           message.bot.sendMessage(
             message.channel,
-            java.net.InetAddress.getByName(ip).getHostName())
-        case None => message.bot.sendMessage(
-          message.channel,
-          java.net.InetAddress.getAllByName(arguments)
-            .map(_.getHostAddress)
-            .mkString(", "))
+            "Current streak: %s, Longest streak: %s".format(
+              (json \ "current_streak").values.toString,
+              (json \ "longest_streak").values.toString))
+        }
       }
-      case _ => None
+    }
+    case "host" | "dns" => IPRegex findFirstIn arguments match {
+      case Some(ip) =>
+        message.bot.sendMessage(
+          message.channel,
+          java.net.InetAddress.getByName(ip).getHostName())
+      case None => message.bot.sendMessage(
+        message.channel,
+        java.net.InetAddress.getAllByName(arguments)
+        .map(_.getHostAddress)
+        .mkString(", "))
+    }
+    case _ => None
   }
 }

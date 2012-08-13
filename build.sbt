@@ -18,5 +18,6 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-nop" % "1.6.6",
   "org.xerial" % "sqlite-jdbc" % "3.7.2",
   "org.jsoup" % "jsoup" % "1.6.3",
-  "net.liftweb" % "lift-json_2.9.1" % "2.4"
+  "net.liftweb" % "lift-json_2.9.1" % "2.4",
+  "joda-time" % "joda-time" % "2.1"
 )
