@@ -3,6 +3,8 @@ import scala.slick.driver.SQLiteDriver.simple._
 import Database.threadLocalSession
 import net.liftweb.json._
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.format.DateTimeFormat
 
 /** Handle Hax command parsing. */
 object Command {
@@ -15,7 +17,8 @@ object Command {
     */
   def apply(command: String,
     db: Database,
-    message: IRCMessage) = command match {
+    message: IRCMessage): Unit = command match {
+    case "time" => Command("time", "GMT", db, message)
     case "dbtest" => message.bot.sendMessage(message.channel, db.toString)
     case "meme" => {
       val meme = URLSnarfers.getFutureRawBodyForURL(
@@ -39,11 +42,23 @@ object Command {
   def apply(command: String,
     arguments: String,
     db: Database,
-    message: IRCMessage) = command match {
+    message: IRCMessage): Unit = command match {
     case "slap" | "fishify" =>
         message.bot.sendAction(
           message.channel,
           "slaps %s with a ><>.".format(arguments))
+    case "time" => {
+      try {
+        val dt = new DateTime().withZone(DateTimeZone.forID(arguments))
+        message.bot.sendMessage(
+          message.channel,
+          DateTimeFormat.fullDateTime.print(dt))
+      } catch {
+        case e: IllegalArgumentException => message.bot.sendMessage(
+          message.channel,
+          "The timezone you specified, '%s', is invalid.".format(arguments))
+      }
+    }
     case "can" | "realcan" => {
       val url = command match {
         case "can" => "http://can.tenthbit.net/"
