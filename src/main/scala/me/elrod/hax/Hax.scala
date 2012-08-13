@@ -49,7 +49,7 @@ class Hax(config: Config) extends PircBot {
         case Array(command) =>
           Command(command.drop(comchar.length), db, ircMessage)
         case Array(command, arguments) =>
-          Command(command.drop(comchar.length), arguments, db, ircMessage)
+          Command(command.drop(comchar.length), arguments.trim, db, ircMessage)
       }
     else
       message match {
