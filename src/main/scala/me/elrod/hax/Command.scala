@@ -59,6 +59,27 @@ object Command {
           "The timezone you specified, '%s', is invalid.".format(arguments))
       }
     }
+    case "google" => {
+      val google = URLSnarfers.getFutureRawBodyForURL(
+        "http://ajax.googleapis.com/ajax/services/search/web",
+        Some(
+          Map(
+            "v" -> "1.0",
+            "q" -> arguments)))
+      google onSuccess {
+        case response => {
+          val firstResult = (parse(response) \ "responseData" \ "results")(0)
+          val JString(url) = firstResult \ "url"
+          val JString(title) = firstResult \ "titleNoFormatting"
+          message.bot.sendMessage(
+            message.channel,
+            "%s - %s".format(url, title))
+        }
+      }
+      google onFailure {
+        case f => println(f)
+      }
+    }
     case "can" | "realcan" => {
       val url = command match {
         case "can" => "http://can.tenthbit.net/"

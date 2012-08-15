@@ -17,12 +17,22 @@ object URLSnarfers {
     * @return a future that, on success, will contain a
     *         [[org.jsoup.nodes.Document]] with the response.
     */
-  def getFutureForURL(theURL: String) = {
+  def getFutureForURL(theURL: String,
+    params: Option[Map[String, String]] = None) = {
+    
+    val jsoup = Jsoup.connect(theURL)
+      .header("Accept-Language", "en-us,en;q=0.5")
+      .header("Accept-Encoding", "gzip, deflate")
+
+    params match {
+      case Some(map) => for ((name, value) <- map) {
+        jsoup.data(name, value)
+      }
+      case _ =>
+    }
+
     future {
-      Jsoup.connect(theURL)
-        .header("Accept-Language", "en-us,en;q=0.5")
-        .header("Accept-Encoding", "gzip, deflate")
-        .get()
+      jsoup.get()
     }
   }
 
@@ -34,13 +44,22 @@ object URLSnarfers {
     * @return a future that, on success, will contain a String containing the
     *         ''raw'' response from the server.
     */
-  def getFutureRawBodyForURL(theURL: String) = {
+  def getFutureRawBodyForURL(theURL: String,
+    params: Option[Map[String, String]] = None) = {
+
+    val jsoup = Jsoup.connect(theURL)
+      .header("Accept-Language", "en-us,en;q=0.5")
+      .header("Accept-Encoding", "gzip, deflate")
+
+    params match {
+      case Some(map) => for ((name, value) <- map) {
+        jsoup.data(name, value)
+      }
+      case _ =>
+    }
+
     future {
-      Jsoup.connect(theURL)
-        .header("Accept-Language", "en-us,en;q=0.5")
-        .header("Accept-Encoding", "gzip, deflate")
-        .execute
-        .body
+      jsoup.execute.body
     }
   }
 
