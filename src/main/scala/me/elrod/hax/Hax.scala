@@ -61,6 +61,14 @@ class Hax(config: Config) extends PircBot {
       }
   }
 
+
+  override def onAction(sender: String,
+    login: String,
+    hostname: String,
+    target: String,
+    action: String) =
+    onMessage(target, sender, login, hostname, action)
+
   /** Reconnect when we get disconnected from the network. */
   override def onDisconnect() = new Hax(config)
 }
