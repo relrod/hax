@@ -2,11 +2,13 @@ package me.elrod.hax
 import scala.concurrent.{ Future, future }
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.jsoup.Jsoup
+import net.liftweb.json._
 import org.joda.time.Period
 
 object URLSnarfers {
   val URLRegex = """(?i).*?(https?://\S+).*""".r
   val SpotifyRegex = """(?i).*spotify:(\w+):(\w+).*""".r
+  val TwitterRegex = """(?i).*?https?://twitter.com/.*/status(?:es|)/(\d+).*""".r
 
   /** Concurrently get a JSoup Document with the data from the URL.
     *
@@ -76,6 +78,27 @@ object URLSnarfers {
         val title = document.title.replace("\n", "").replaceAll("""\s+""", " ")
         if (!title.isEmpty)
           message.bot.sendMessage(message.channel, "\"" + title + "\"")
+      }
+    }
+  }
+
+  /** Fetch information about a given tweet, based on its id.
+   *
+   * @param id the tweet ID
+   * @return Unit - THis method sends the result to the bot, itself.
+   */
+  def fetchTweet(id: String, message: IRCMessage) {
+    val f = getFutureRawBodyForURL(
+      "https://api.twitter.com/1/statuses/show.json?id=%s".format(id))
+    f onSuccess {
+      case response => {
+        val json = parse(response)
+        val JString(username) = json \ "user" \ "screen_name"
+        val JString(tweet) = json \ "text"
+        val formattedTweet = "\002@%s\002's tweet: \"%s\"".format(
+          username,
+          tweet)
+        message.bot.sendMessage(message.channel, formattedTweet)
       }
     }
   }

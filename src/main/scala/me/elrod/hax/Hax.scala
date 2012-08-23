@@ -53,10 +53,12 @@ class Hax(config: Config) extends PircBot {
       }
     else
       message match {
-        case URLSnarfers.URLRegex(url) =>
-          URLSnarfers.fetchTitle(url, ircMessage)
         case URLSnarfers.SpotifyRegex(mediaType, identifier) =>
           URLSnarfers.spotifyURI(mediaType, identifier, ircMessage)
+        case URLSnarfers.TwitterRegex(url) =>
+          URLSnarfers.fetchTweet(url, ircMessage)
+        case URLSnarfers.URLRegex(url) =>
+          URLSnarfers.fetchTitle(url, ircMessage)
         case _ =>
       }
   }
