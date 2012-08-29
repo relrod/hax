@@ -87,7 +87,7 @@ object Command {
       }
 
       val can = URLSnarfers.getFutureRawBodyForURL(
-        url + "/~" + arguments + ".json")
+        url + "~" + arguments + ".json")
 
       can onSuccess {
         case response => {
@@ -98,6 +98,12 @@ object Command {
               (json \ "current_streak").values.toString,
               (json \ "longest_streak").values.toString))
         }
+      }
+
+      can onFailure {
+        case failure => message.bot.sendMessage(
+          message.channel,
+          "A failure occurred. Invalid username? (" + failure.getMessage + ")")
       }
     }
     case "host" | "dns" => IPRegex findFirstIn arguments match {
