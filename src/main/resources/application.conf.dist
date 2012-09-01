@@ -19,4 +19,8 @@ bot {
     driver: "org.sqlite.JDBC"
   }
 
+  hamweather {
+    id: "some_id"
+    secret: "your_sekrit"
+  }
 }

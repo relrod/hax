@@ -59,6 +59,14 @@ object Command {
           "The timezone you specified, '%s', is invalid.".format(arguments))
       }
     }
+    case "weather" => {
+      val weather = URLSnarfers.getFutureRawBodyForURL(
+        "https://api.aerisapi.com/observations/%s?client_id=%s&client_secret=%s" % (
+          arguments,
+          message.bot.config.getString("bot.hamweather.id"),
+          message.bot.config.getString("bot.hamweather.secret"))
+        
+    }
     case "google" => {
       val google = URLSnarfers.getFutureRawBodyForURL(
         "http://ajax.googleapis.com/ajax/services/search/web",
