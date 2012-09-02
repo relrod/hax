@@ -15,7 +15,7 @@ object Hax extends App {
   * @constructor Create an instance of Hax
   * @param config A Typesafe config object
   */
-class Hax(config: Config) extends PircBot {
+class Hax(val config: Config) extends PircBot {
   setName(config.getString("bot.nick"))
   setLogin(config.getString("bot.nick"))
   setVerbose(config.getBoolean("bot.verbose"))

@@ -61,11 +61,28 @@ object Command {
     }
     case "weather" => {
       val weather = URLSnarfers.getFutureRawBodyForURL(
-        "https://api.aerisapi.com/observations/%s?client_id=%s&client_secret=%s" % (
+        "https://api.aerisapi.com/observations/%s?client_id=%s&client_secret=%s".format(
           arguments,
           message.bot.config.getString("bot.hamweather.id"),
-          message.bot.config.getString("bot.hamweather.secret"))
-        
+          message.bot.config.getString("bot.hamweather.secret")))
+      weather onSuccess {
+        case response => {
+          val weather = parse(response) \ "response"
+          message.bot.sendMessage(
+            message.channel,
+            "Weather for %s, %s, %s: %s. %sF (%sC). Humidity %s%%. Wind is %s @ %sMPH.".format(
+              (weather \ "place" \ "name").values.toString,
+              (weather \ "place" \ "state").values.toString,
+              (weather \ "place" \ "country").values.toString,
+              (weather \ "ob" \ "weather").values.toString,
+              (weather \ "ob" \ "tempF").values.toString,
+              (weather \ "ob" \ "tempC").values.toString,
+              (weather \ "ob" \ "humidity").values.toString,
+              (weather \ "ob" \ "windDir").values.toString,
+              (weather \ "ob" \ "windMPH").values.toString
+            ))
+        }
+      }
     }
     case "google" => {
       val google = URLSnarfers.getFutureRawBodyForURL(
