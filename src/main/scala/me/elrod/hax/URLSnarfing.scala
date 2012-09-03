@@ -4,6 +4,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import org.jsoup.Jsoup
 import net.liftweb.json._
 import org.joda.time.Period
+import scala.collection.JavaConversions._
 
 object URLSnarfers {
   val URLRegex = """(?i).*?(https?://\S+).*""".r
@@ -128,7 +129,7 @@ object URLSnarfers {
         val response = mediaType match {
           case "track" => {
             val name = document.select("name").first.text
-            val artist = document.select("artist name").text
+            val artist = document.select("artist").iterator.map(_.select("name").text).mkString(", ")
             val album = document.select("album name").text
             val trackNumber = document.select("track-number").text.toInt
             val length = document.select("length").text.toDouble
