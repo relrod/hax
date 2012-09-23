@@ -8,6 +8,7 @@ import org.joda.time.format.DateTimeFormat
 
 /** Handle Hax command parsing. */
 object Command {
+  implicit val formats = net.liftweb.json.DefaultFormats
   val IPRegex = """^(\d[\d\.]+\d)$""".r
 
   /** Commands without arguments.
@@ -119,9 +120,10 @@ object Command {
           val json = parse(response)
           message.bot.sendMessage(
             message.channel,
-            "Current streak: %s, Longest streak: %s".format(
+            "Current streak: %s, Longest streak: %s. (last X: %s)".format(
               (json \ "current_streak").values.toString,
-              (json \ "longest_streak").values.toString))
+              (json \ "longest_streak").values.toString,
+              (json \ "days" \\ classOf[JString]).last.asInstanceOf[String]))
         }
       }
 
