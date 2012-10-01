@@ -73,12 +73,20 @@ object URLSnarfers {
     * @return Unit - This method sends the title to the bot, itself.
     */
   def fetchTitle(theURL: String, message: IRCMessage) {
+    val short = getFutureRawBodyForURL("http://da.gd/s/?strip=1&stripping_is_hawt=1&text=1&url=" + theURL)
+    var short_url : String = ""
+    short onSuccess {
+      case response => {
+        if(!response.isEmpty)
+          short_url = " ( Short URL: " + response + " )"
+      }
+    }
     val f = getFutureForURL(theURL)
     f onSuccess {
       case document => {
         val title = document.title.replace("\n", "").replaceAll("""\s+""", " ")
         if (!title.isEmpty)
-          message.bot.sendMessage(message.channel, "\"" + title + "\"")
+          message.bot.sendMessage(message.channel, "\"" + title + "\"" + short_url)
       }
     }
   }
