@@ -7,6 +7,8 @@ import Database.threadLocalSession
 
 object Hax extends App {
   val config = ConfigFactory.load()
+  util.Properties.setProp("networkaddress.cache.ttl", "0")
+  util.Properties.setProp("networkaddress.cache.negative.ttl", "0")
   val bot = new Hax(config)
 }
 
