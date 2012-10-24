@@ -5,6 +5,7 @@ import org.jsoup.Jsoup
 import net.liftweb.json._
 import org.joda.time.Period
 import scala.collection.JavaConversions._
+import org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4
 
 object URLSnarfers {
   val URLRegex = """(?i).*?(https?://\S+).*""".r
@@ -98,7 +99,7 @@ object URLSnarfers {
         val JString(tweet) = json \ "text"
         val formattedTweet = "\002@%s\002's tweet: %s".format(
           username,
-          tweet)
+          unescapeHtml4(tweet))
         message.bot.sendMessage(message.channel, formattedTweet)
       }
     }

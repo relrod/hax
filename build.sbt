@@ -20,5 +20,6 @@ libraryDependencies ++= Seq(
   "org.jsoup" % "jsoup" % "1.6.3",
   "net.liftweb" % "lift-json_2.9.1" % "2.4",
   "org.joda" % "joda-convert" % "1.2",
-  "joda-time" % "joda-time" % "2.1"
+  "joda-time" % "joda-time" % "2.1",
+  "org.apache.commons" % "commons-lang3" % "3.1"
 )
