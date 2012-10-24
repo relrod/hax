@@ -2,7 +2,7 @@ name := "hax"
 
 version := "2.0.0"
 
-scalaVersion := "2.10.0-M7"
+scalaVersion := "2.10.0-RC1"
 
 scalacOptions ++= Seq(
   "-deprecation",
