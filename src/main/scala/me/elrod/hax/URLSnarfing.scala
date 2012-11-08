@@ -23,7 +23,7 @@ object URLSnarfers {
     */
   def getFutureForURL(theURL: String,
     params: Option[Map[String, String]] = None) = {
-    
+
     val jsoup = Jsoup.connect(new java.net.URI(theURL).toASCIIString())
       .header("Accept-Language", "en-us,en;q=0.5")
       .header("Accept-Encoding", "gzip, deflate")
