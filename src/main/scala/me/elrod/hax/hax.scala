@@ -70,7 +70,7 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
       }
 
       case BlankKarmaCommand(karma) => {
-        if (lastNick != "") {
+        if (lastNick != "" && lastNick != sender) {
           karma match {
             case "++" => dispenseKarma(lastNick.toLowerCase, "up")
             case "--" => dispenseKarma(lastNick.toLowerCase, "down")
