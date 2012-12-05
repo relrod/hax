@@ -45,6 +45,7 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
   val CommandWithArguments = ("^" + comChar + "(.+?) (.+)").r
   val CommandWithoutArguments = ("^" + comChar + "(.+)").r
   val KarmaCommand = ("""(?i)^(\S+)(--|\+\+).*""").r
+  val BlankKarmaCommand = ("""(?i)^(--|\+\+).*""").r
   val URLRegex = ("""(?i).*?(https?://\S+).*""").r 
   val TwitterRegex = """(?i).*?https?://twitter.com/.*/status(?:es|)/(\d+).*""".r
   val SpotifyRegex = """(?i).*spotify:(\w+):(\w+).*""".r
@@ -53,6 +54,8 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
 
   // Thanks @duckinator for the regex.
   val YouTubeRegex = """(?i).*https?://(?:www\.)?youtu(?:\.be/|be\.com/watch\?(?:.+&)?v=)([^&#\s]+).*""".r
+
+  var lastNick = ""
   
   override def onMessage(channel: String, sender: String, login: String, hostname: String, message: String) {
     if (ignoreNicks.contains(sender) || message.startsWith("^")) return
@@ -63,6 +66,15 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
         karma match {
           case "++" => dispenseKarma(item.toLowerCase, "up")
           case "--" => dispenseKarma(item.toLowerCase, "down")
+        }
+      }
+
+      case BlankKarmaCommand(karma) => {
+        if (lastNick != "") {
+          karma match {
+            case "++" => dispenseKarma(lastNick.toLowerCase, "up")
+            case "--" => dispenseKarma(lastNick.toLowerCase, "down")
+          }
         }
       }
 
@@ -108,6 +120,7 @@ class HaxBot(nick: String, database: Database, comChar: String = "\\.", ignoreNi
 
       case _ =>
     }
+    lastNick = sender
   }
 
   override def onAction(sender: String, login: String, hostname: String, target: String, action: String) =
