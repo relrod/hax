@@ -134,20 +134,29 @@ object Command {
       }
     }
     case "host" | "dns" => IPRegex findFirstIn arguments match {
-      case Some(ip) =>
-        message.bot.sendMessage(
-          message.channel,
-          java.net.InetAddress.getByName(ip).getHostName())
-      case None => try {
-        message.bot.sendMessage(
-          message.channel,
-          java.net.InetAddress.getAllByName(arguments)
-          .map(_.getHostAddress)
-          .mkString(", "))
-      } catch {
-        case e: java.net.UnknownHostException => message.bot.sendMessage(
-          message.channel,
-          "Unknown host: " + arguments)
+      case Some(ip) => {
+        try {
+          message.bot.sendMessage(
+            message.channel,
+            java.net.InetAddress.getByName(ip).getHostName())
+        } catch {
+          case e: java.net.UnknownHostException => message.bot.sendMessage(
+            message.channel,
+            e.getMessage)
+        }
+      }
+      case None => {
+        try {
+          message.bot.sendMessage(
+            message.channel,
+            java.net.InetAddress.getAllByName(arguments)
+            .map(_.getHostAddress)
+            .mkString(", "))
+        } catch {
+          case e: java.net.UnknownHostException => message.bot.sendMessage(
+            message.channel,
+            e.getMessage)
+        }
       }
     }
     case _ => None
