@@ -99,7 +99,7 @@ object URLSnarfers {
         val JString(tweet) = json \ "text"
         val formattedTweet = "\002@%s\002's tweet: %s".format(
           username,
-          unescapeHtml4(tweet.replaceAll("\n", "")))
+          unescapeHtml4(tweet.replaceAll("\n", " ")))
         message.bot.sendMessage(message.channel, formattedTweet)
       }
     }
