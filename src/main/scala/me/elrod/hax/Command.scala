@@ -6,6 +6,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import org.joda.time.{DateTime, DateTimeZone}
 import org.joda.time.format.DateTimeFormat
 
+import me.elrod.pkgwat._
+
 /** Handle Hax command parsing. */
 object Command {
   implicit val formats = net.liftweb.json.DefaultFormats
@@ -58,6 +60,21 @@ object Command {
         case e: IllegalArgumentException => message.bot.sendMessage(
           message.channel,
           "The timezone you specified, '%s', is invalid.".format(arguments))
+      }
+    }
+    case "pkgwat" => {
+      val pkgwat = new Pkgwat
+      pkgwat.releases(arguments) onSuccess { case results =>
+        if (results.rows.length == 0) {
+          message.bot.sendMessage(message.channel, "No results.")
+        } else {
+          val versions = results.rows.map { row =>
+            s"${row.release}: s: ${row.stableVersion} t: ${row.testingVersion}"
+          }
+          message.bot.sendMessage(
+            message.channel,
+            versions.mkString(", "))
+        }
       }
     }
     case "google" => {
