@@ -11,6 +11,8 @@ scalacOptions ++= Seq(
 
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
+resolvers += "Spray repo" at "http://repo.spray.io/"
+
 libraryDependencies ++= Seq(
   "pircbot" % "pircbot" % "1.5.0",
   "com.typesafe" % "config" % "1.0.1",
