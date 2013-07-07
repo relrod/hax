@@ -46,23 +46,26 @@ class Hax(val config: Config) extends PircBot {
     message: String) {
     if (config.getStringList("bot.ignores").asScala contains sender) return
     val ircMessage = IRCMessage(this, channel, sender, login, hostname, message)
-    if (message startsWith comchar)
+    if (message startsWith comchar) {
       message.split(" ", 2) match {
         case Array(command) =>
           Command(command.drop(comchar.length), db, ircMessage)
         case Array(command, arguments) =>
           Command(command.drop(comchar.length), arguments.trim, db, ircMessage)
       }
-    else
-      message match {
-        case URLSnarfers.SpotifyRegex(mediaType, identifier) =>
-          URLSnarfers.spotifyURI(mediaType, identifier, ircMessage)
-        case URLSnarfers.TwitterRegex(url) =>
-          URLSnarfers.fetchTweet(url, ircMessage)
-        case URLSnarfers.URLRegex(url) =>
-          URLSnarfers.fetchTitle(url, ircMessage)
-        case _ =>
+    } else {
+      if (config.getBoolean("bot.snarfing")) {
+        message match {
+          case URLSnarfers.SpotifyRegex(mediaType, identifier) =>
+            URLSnarfers.spotifyURI(mediaType, identifier, ircMessage)
+          case URLSnarfers.TwitterRegex(url) =>
+            URLSnarfers.fetchTweet(url, ircMessage)
+          case URLSnarfers.URLRegex(url) =>
+            URLSnarfers.fetchTitle(url, ircMessage)
+          case _ =>
+        }
       }
+    }
   }
 
 
