@@ -86,21 +86,22 @@ object URLSnarfers {
 
   /** Fetch information about a given tweet, based on its id.
    *
+   * @param twitter the Twitter instance to use
    * @param id the tweet ID
-   * @return Unit - THis method sends the result to the bot, itself.
+   * @param message The irc message that the link came from
+   * @return Unit - This method sends the result to the bot, itself.
    */
-  def fetchTweet(id: String, message: IRCMessage) {
-    val f = getFutureRawBodyForURL(
-      "https://api.twitter.com/1/statuses/show.json?id=%s".format(id))
-    f onSuccess {
-      case response => {
-        val json = parse(response)
-        val JString(username) = json \ "user" \ "screen_name"
-        val JString(tweet) = json \ "text"
-        val formattedTweet = "\002@%s\002's tweet: %s".format(
-          username,
-          unescapeHtml4(tweet.replaceAll("\n", " ")))
-        message.bot.sendMessage(message.channel, formattedTweet)
+  def fetchTweet(twitter: twitter4j.Twitter, id: String, message: IRCMessage) {
+    future {
+      twitter showStatus id.toLong
+    } onSuccess {
+      case tweet => {
+        val formatted = "\002@%s\002's tweet (fav: %d, rt: %d): %s".format(
+          tweet.getUser.getScreenName,
+          tweet.getFavoriteCount,
+          tweet.getRetweetCount,
+          unescapeHtml4(tweet.getText.replaceAll("\n", " ")))
+        message.bot.sendMessage(message.channel, formatted)
       }
     }
   }

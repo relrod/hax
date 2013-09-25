@@ -19,6 +19,15 @@ h1. Installing
 
 Standard SBT project, so just clone and @sbt update; sbt run@.
 
+h1. Twitter snarfing
+
+We use the twitter4j library, but we need a snapshot version as opposed to the
+latest release version.
+
+Go to http://dev.twitter.com and register a new app. Take note of the consumer
+key and secret, and fill these in in your Hax config.
+
+
 h1. License
 
 <pre>

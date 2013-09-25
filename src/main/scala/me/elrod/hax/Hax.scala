@@ -29,6 +29,10 @@ class Hax(val config: Config) extends PircBot {
   val db = Database.forURL(config.getString("bot.database.jdbc"),
     driver = config.getString("bot.database.driver"))
 
+  val twitter = Twitter(
+    config.getString("bot.twitter.key"),
+    config.getString("bot.twitter.secret")).twitter
+
   /** Gets called every time a message gets sent to the channel.
     *
     * This is where we handle things like responding to commands.
@@ -59,7 +63,7 @@ class Hax(val config: Config) extends PircBot {
           case URLSnarfers.SpotifyRegex(mediaType, identifier) =>
             URLSnarfers.spotifyURI(mediaType, identifier, ircMessage)
           case URLSnarfers.TwitterRegex(url) =>
-            URLSnarfers.fetchTweet(url, ircMessage)
+            URLSnarfers.fetchTweet(twitter, url, ircMessage)
           case URLSnarfers.URLRegex(url) =>
             URLSnarfers.fetchTitle(url, ircMessage)
           case _ =>
