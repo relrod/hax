@@ -52,6 +52,7 @@ object URLSnarfers {
     params: Option[Map[String, String]] = None) = {
 
     val jsoup = Jsoup.connect(new java.net.URI(theURL).toASCIIString())
+      .ignoreContentType(true)
       .header("Accept-Language", "en-us,en;q=0.5")
       .header("Accept-Encoding", "gzip, deflate")
 

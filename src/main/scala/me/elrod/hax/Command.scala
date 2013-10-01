@@ -18,7 +18,8 @@ object Command {
     * @param command the command that was called
     * @return an Option[String] containing the response
     */
-  def apply(command: String,
+  def apply(
+    command: String,
     db: Database,
     message: IRCMessage): Unit = command match {
     case "time" => Command("time", "GMT", db, message)
@@ -32,6 +33,23 @@ object Command {
             response.lines.toList.head)
       }
     }
+    case "ghstatus" => {
+      val status = URLSnarfers.getFutureRawBodyForURL(
+        "https://status.github.com/api/last-message.json")
+      status onSuccess {
+        case response => {
+          val json = parse(response)
+          val JString(body) = json \ "body"
+          val JString(date) = json \ "created_on"
+          message.bot.sendMessage(
+            message.channel,
+            "Latest message: %s (at %s)".format(body, date))
+        }
+      }
+      status onFailure {
+        case e => message.bot.sendMessage(message.channel, e.toString)
+      }
+    }
     case _ => None
   }
 
@@ -41,7 +59,8 @@ object Command {
     * @param arguments a String containing arguments for the command
     * @return an Option[String] containing the response
     */
-  def apply(command: String,
+  def apply(
+    command: String,
     arguments: String,
     db: Database,
     message: IRCMessage): Unit = command match {
