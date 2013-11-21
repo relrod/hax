@@ -9,6 +9,7 @@ object Hax extends App {
   val config = ConfigFactory.load()
   util.Properties.setProp("networkaddress.cache.ttl", "0")
   util.Properties.setProp("networkaddress.cache.negative.ttl", "0")
+  util.Properties.setProp("http.agent", "Mozilla/5.0 (X11; Linux x86_64; rv:25.0) Gecko/20100101 Firefox/25.0")
   val bot = new Hax(config)
 }
 
