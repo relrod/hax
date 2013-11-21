@@ -50,6 +50,22 @@ object Command {
         case e => message.bot.sendMessage(message.channel, e.toString)
       }
     }
+    case "coinbase" => {
+      val status = URLSnarfers.getFutureRawBodyForURL(
+        "https://coinbase.com/api/v1/prices/spot_rate?currency=USD")
+      status onSuccess {
+        case response => {
+          val json = parse(response)
+          val JString(amount) = json \ "amount"
+          message.bot.sendMessage(
+            message.channel,
+            s"$$${amount} /btc (via coinbase, accurate to within several minutes)")
+        }
+      }
+      status onFailure {
+        case e => message.bot.sendMessage(message.channel, e.toString)
+      }
+    }
     case _ => None
   }
 
